@@ -1,0 +1,1 @@
+<Reference :projects="frontmatter.references" />

@@ -23,6 +23,10 @@ import { isDark } from '~/logics'
           <span class="lt-md:hidden">Projects</span>
           <div i-ri-lightbulb-line class="md:hidden" />
         </router-link>
+        <router-link to="/reference" title="Reference">
+          <span class="lt-md:hidden">Reference</span>
+          <div i-carbon:chemistry-referenceclass="md:hidden" />
+        </router-link>
         <a href="https://twitter.com/jaguarliu" target="_blank" title="Twitter" class="lt-md:hidden">
           <feather-twitter />
         </a>

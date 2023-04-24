@@ -1,5 +1,5 @@
 ---
-title: Projects - Anthony Fu
+title: Projects - Jaguar Liu
 display: Projects
 subtitle: List of projects that I am proud of
 description: List of projects that I am proud of

@@ -4,6 +4,7 @@ description: 扫码崩溃的原因，附源码分析
 date: 2023-04-25T13:00:00.000+00:00
 lang: zh
 duration: 10min
+plum: true
 ---
 > 原文转自:[扫码崩溃的原因，附源码分析](https://mp.weixin.qq.com/s/JKDOTIvJqGVPLmXP3BK5rQ)
 

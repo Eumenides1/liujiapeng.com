@@ -9,3 +9,10 @@ export interface Post {
   recording?: string
   upcoming?: boolean
 }
+
+export interface Reference {
+  type: string
+  title: string
+  icon: string
+  link: string
+}

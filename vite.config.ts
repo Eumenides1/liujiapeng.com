@@ -50,7 +50,6 @@ export default defineConfig({
       pagesDir: 'pages',
       extendRoute(route) {
         const path = resolve(__dirname, route.component.slice(1))
-
         if (!path.includes('projects.md') && path.endsWith('.md')) {
           const md = fs.readFileSync(path, 'utf-8')
           const { data } = matter(md)
@@ -106,7 +105,7 @@ export default defineConfig({
             return
           const path = `og/${route}.png`
           promises.push(genreateOg(frontmatter.title!.replace(/\s-\s.*$/, '').trim(), `public/${path}`))
-          frontmatter.image = `https://antfu.me/${path}`
+          frontmatter.image = `https://jaguarliu.me/${path}`
         })()
         const head = defaults(frontmatter, options)
         return { head, frontmatter }

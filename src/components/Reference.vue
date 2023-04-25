@@ -1,11 +1,20 @@
 <script setup lang='ts'>
-console.log(111);
+import { formatDate } from '~/logics'
+
+const { frontmatter } = defineProps({
+  frontmatter: {
+    type: Object,
+    required: true,
+  },
+})
 
 const router = useRouter()
 const route = useRoute()
 const content = ref<HTMLDivElement>()
 
 const base = 'https://jaguarliu.me'
+const tweetUrl = computed(() => `https://twitter.com/intent/tweet?text=${encodeURIComponent(`Reading @antfu7\'s ${base}${route.path}\n\nI think...`)}`)
+const elkUrl = computed(() => `https://elk.zone/intent/post?text=${encodeURIComponent(`Reading @antfu@m.webtoo.ls\'s ${base}${route.path}\n\nI think...`)}`)
 
 onMounted(() => {
   const navigate = () => {
@@ -57,24 +66,37 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
-    reference
+  <ClientOnly v-if="frontmatter.plum">
+    <Plum />
+  </ClientOnly>
+  <div v-if="frontmatter.display ?? frontmatter.title" class="prose m-auto mb-8">
+    <h1 class="mb-0">
+      {{ frontmatter.display ?? frontmatter.title }}
+    </h1>
+    <p v-if="frontmatter.date" class="opacity-50 !-mt-2">
+      {{ formatDate(frontmatter.date) }} <span v-if="frontmatter.duration">· {{ frontmatter.duration }}</span>
+    </p>
+    <p v-if="frontmatter.subtitle" class="opacity-50 !-mt-6 italic">
+      {{ frontmatter.subtitle }}
+    </p>
+  </div>
+  <article ref="content">
+    <slot />
+  </article>
+  <div v-if="route.path !== '/'" class="prose m-auto mt-8 mb-8">
+    <template v-if="frontmatter.duration">
+      <span font-mono op50>> </span>
+      <span op50>comment on </span>
+      <a :href="elkUrl" target="_blank" op50>mastodon</a>
+      <span op25> / </span>
+      <a :href="tweetUrl" target="_blank" op50>twitter</a>
+    </template>
+    <br>
+    <span font-mono op50>> </span>
+    <RouterLink
+      :to="route.path.split('/').slice(0, -1).join('/') || '/'"
+      class="font-mono op50 hover:op75"
+      v-text="'cd ..'"
+    />
   </div>
 </template>
-
-<style scoped>
-.project-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-}
-
-.project-grid a.item {
-  padding: 0.8em 1em;
-  background: transparent;
-  font-size: 1.1rem;
-}
-
-.project-grid a.item:hover {
-  background: #88888808;
-}
-</style>

@@ -1,45 +1,64 @@
-<script setup lang="ts">
-defineProps<{ references: Record<string, any[]> }>()
+<script setup lang='ts'>
+console.log(111);
+
+const router = useRouter()
+const route = useRoute()
+const content = ref<HTMLDivElement>()
+
+const base = 'https://jaguarliu.me'
+
+onMounted(() => {
+  const navigate = () => {
+    if (location.hash) {
+      document.querySelector(decodeURIComponent(location.hash))
+        ?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
+  const handleAnchors = (
+    event: MouseEvent & { target: HTMLElement },
+  ) => {
+    const link = event.target.closest('a')
+
+    if (
+      !event.defaultPrevented
+      && link
+      && event.button === 0
+      && link.target !== '_blank'
+      && link.rel !== 'external'
+      && !link.download
+      && !event.metaKey
+      && !event.ctrlKey
+      && !event.shiftKey
+      && !event.altKey
+    ) {
+      const url = new URL(link.href)
+      if (url.origin !== window.location.origin)
+        return
+
+      event.preventDefault()
+      const { pathname, hash } = url
+      if (hash && (!pathname || pathname === location.pathname)) {
+        window.history.replaceState({}, '', hash)
+        navigate()
+      }
+      else {
+        router.push({ path: pathname, hash })
+      }
+    }
+  }
+
+  useEventListener(window, 'hashchange', navigate)
+  useEventListener(content.value!, 'click', handleAnchors, { passive: false })
+
+  navigate()
+  setTimeout(navigate, 500)
+})
 </script>
 
 <template>
-  <template v-for="key in Object.keys(references)" :key="key">
-    <h4 class="mt-10 font-bold">
-      {{ key }}
-    </h4>
-    <div class="project-grid py-2 -mx-3 gap-2">
-      <a
-        v-for="item, idx in references[key]"
-        :key="idx"
-        class="item relative flex items-center"
-        :href="item.link"
-        target="_blank"
-        :class="!item.link ? 'opacity-0 pointer-events-none h-0 -mt-8 -mb-4' : ''"
-        :title="item.name"
-      >
-        <div v-if="item.icon" class="pt-2 pr-5">
-          <Slidev v-if="item.icon === 'slidev'" class="text-4xl opacity-50" />
-          <VueUse v-else-if="item.icon === 'vueuse'" class="text-4xl opacity-50" />
-          <VueReactivity v-else-if="item.icon === 'vue-reactivity'" class="text-4xl opacity-50" />
-          <VueDemi v-else-if="item.icon === 'vue-demi'" class="text-4xl opacity-50" />
-          <Unocss v-else-if="item.icon === 'unocss'" class="text-4xl opacity-50" />
-          <Vitest v-else-if="item.icon === 'vitest'" class="text-4xl opacity-50" />
-          <Elk v-else-if="item.icon === 'elk'" class="text-4xl opacity-50" />
-          <div v-else class="text-3xl opacity-50" :class="item.icon || 'i-carbon-unknown'" />
-        </div>
-        <div class="flex-auto">
-          <div class="text-normal">{{ item.name }}</div>
-          <div class="desc text-sm opacity-50 font-normal" v-html="item.desc" />
-        </div>
-      </a>
-    </div>
-  </template>
-  <div class="markdown pb5">
-    <p op75>
-      <em>
-        Thanks for getting intersted in my works!
-      </em>
-    </p>
+  <div>
+    reference
   </div>
 </template>
 

@@ -2,10 +2,10 @@
 useHead({
   meta: [
     { property: 'og:title', content: 'Jaguar Liu' },
-    { property: 'og:image', content: 'https://antfu.me/og-icon.png' },
-    { name: 'description', content: 'Anthony Fu\'s Portfolio' },
+    { property: 'og:image', content: 'https://jaguarliu.me/og-icon.png' },
+    { name: 'description', content: 'Jaguar Liu\'s Portfolio' },
     { name: 'twitter:card', content: 'summary' },
-    { name: 'twitter:creator', content: '@antfu7' },
+    { name: 'twitter:creator', content: '@jaguarliu' },
   ],
 })
 </script>

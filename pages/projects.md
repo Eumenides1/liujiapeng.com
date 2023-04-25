@@ -18,6 +18,15 @@ projects:
       link: 'https://gitee.com/ashbur-e/rookie-news'
       desc: 'Spring Cloud 自媒体网站'
       icon: 'i-logos:designernews'
+  Game:
+    - name: '扫雷'
+      link: 'https://minseweeper.jaguarliu.me/'
+      desc: '扫雷小游戏～休闲一下'
+      icon: 'i-arcticons:minesweeper'
+    - name: '汉兜'
+      link: 'https://handle.jaguarliu.me/'
+      desc: 'A Chinese Hanzi variation of Wordle'
+      icon: 'i-carbon-scatter-matrix'
 ---
 
 <ListProjects :projects="frontmatter.projects" />

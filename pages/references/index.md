@@ -10,10 +10,6 @@ references:
       link: '/references/adb'
       desc: 'Android Debug Bridge 备忘清单'
       icon: 'i-mdi:android-debug-bridge'
-    - name: 'Adobe Lightroom'
-      link: '/references/adobe-lightroom'
-      desc: 'Adobe Lightroom 键盘快捷键'
-      icon: 'i-cib:adobe'
   编程:
     - name: 'C语言'
       link: '/references/c'

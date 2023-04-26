@@ -40,7 +40,12 @@ export default defineConfig({
   },
   plugins: [
     UnoCSS(),
-    VitePWA({ registerType: 'autoUpdate' }),
+    VitePWA({
+      registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true,
+      },
+    }),
     Vue({
       include: [/\.vue$/, /\.md$/],
       reactivityTransform: true,

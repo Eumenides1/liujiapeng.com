@@ -41,6 +41,26 @@ export default defineConfig({
   plugins: [
     UnoCSS(),
     VitePWA({
+      manifest: {
+        name: 'Jaguar Liu \' s Blog',
+        short_name: 'Jaguar Blog',
+        icons: [
+          {
+            src: 'jaguarliu.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+          {
+            src: 'jaguarliu.png',
+            sizes: '512x512',
+            type: 'image/png',
+          },
+        ],
+        start_url: '/',
+        display: 'standalone',
+        background_color: '#ffffff',
+        theme_color: '#ffffff',
+      },
       registerType: 'autoUpdate',
       devOptions: {
         enabled: true,

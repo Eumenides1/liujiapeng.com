@@ -3,6 +3,7 @@ title: vue中的html是真实的html么
 date: 2023-04-24T23:00:00Z
 lang: zh
 duration: 25min
+plum: true
 ---
 
 ## **在 .vue 文件的 template 中写入的 html 是真实的 html 标签节点吗？**

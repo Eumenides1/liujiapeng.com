@@ -19,6 +19,7 @@ import SVG from 'vite-svg-loader'
 import TOC from 'markdown-it-table-of-contents'
 import sharp from 'sharp'
 import { slugify } from './scripts/slugify'
+import { VitePWA } from 'vite-plugin-pwa'
 
 const promises: Promise<any>[] = []
 
@@ -39,7 +40,7 @@ export default defineConfig({
   },
   plugins: [
     UnoCSS(),
-
+    VitePWA(),
     Vue({
       include: [/\.vue$/, /\.md$/],
       reactivityTransform: true,
@@ -73,6 +74,9 @@ export default defineConfig({
             light: 'vitesse-light',
             dark: 'vitesse-dark',
           },
+        })
+        md.use(TOC, {
+          includeLevel: [1, 2, 3],
         })
         md.use(anchor, {
           slugify,

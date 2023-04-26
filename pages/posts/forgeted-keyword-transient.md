@@ -3,6 +3,7 @@ title: 被遗忘的Java关键字：transient
 date: 2023-04-26T13:00:00Z
 lang: zh
 duration: 25min
+plum: true
 ---
 [[toc]]
 今天在看项目代码时候，看到了下面这样一行代码，用transient修饰了一个变量，主要作用是做一个全局开关。说实话我是第一次看到这个关键字。激发了我的好奇心，所以就了解一下这是何方神圣。

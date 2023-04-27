@@ -18,8 +18,8 @@ import SVG from 'vite-svg-loader'
 // @ts-expect-error missing types
 import TOC from 'markdown-it-table-of-contents'
 import sharp from 'sharp'
+import { slugify } from './scripts/slugify'
 import { VitePWA } from 'vite-plugin-pwa'
-import generateSitemap from 'vite-ssg-sitemap'
 
 const promises: Promise<any>[] = []
 

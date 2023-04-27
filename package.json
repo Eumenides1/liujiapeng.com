@@ -14,6 +14,7 @@
     "@vueuse/head": "^1.0.24",
     "dayjs": "^1.11.7",
     "nprogress": "^0.2.0",
+    "vite-ssg-sitemap": "^0.4.3",
     "vue": "^3.2.47",
     "vue-router": "4.1.6"
   },

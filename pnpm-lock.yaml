@@ -13,6 +13,9 @@ dependencies:
   nprogress:
     specifier: ^0.2.0
     version: 0.2.0
+  vite-ssg-sitemap:
+    specifier: ^0.4.3
+    version: 0.4.3
   vue:
     specifier: ^3.2.47
     version: 3.2.47
@@ -7435,6 +7438,10 @@ packages:
       tosource: 2.0.0-alpha.2
       vite: 4.1.1
     dev: true
+
+  /vite-ssg-sitemap@0.4.3:
+    resolution: {integrity: sha512-9ZIRBRCgM1Q4RtXXEBHIu8gotbx9LCnHZOZXtdSzR0DnjN9H5IYGY3yGoxI6VX8dScXiluxOODFlNlr7ydyI9A==}
+    dev: false
 
   /vite-ssg@0.22.1(@vueuse/head@1.0.24)(critters@0.0.16)(vite@4.1.1)(vue-router@4.1.6)(vue@3.2.47):
     resolution: {integrity: sha512-aiFbedElOR/amu0VPfWNj2oR7V9zX6oS4jzWEkOe5fJuZIV2+FnUyiupoyoo3lv3njgS2GENNpmxijN6tpJsTA==}

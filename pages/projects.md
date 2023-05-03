@@ -6,6 +6,10 @@ description: List of projects that I am proud of
 plum: true
 projects:
   Latest:
+    - name: '瑶池-yaoci'
+      link: 'https://github.com/Eumenides1/yaoci'
+      desc: 'Go 语言实现的 高性能 非关系型数据库 '
+      icon: 'i-material-symbols:shutter-speed-rounded'
     - name: 'ashbur-db-router'
       link: 'https://gitee.com/ashbur-e/ashbur-db-router-spring-boot-starter'
       desc: '基于Hash扰动的数据库分库分表组件'

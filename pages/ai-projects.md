@@ -1,8 +1,8 @@
 ---
-title: Ai Projects - Jaguar Liu
-display: Ai Projects
-subtitle: List of projects that I am proud of
-description: List of projects that I am proud of
+title: Ai Tools - Jaguar Liu
+display: Ai Tools
+subtitle: List of Tools for AI
+description: List of Tools for AI
 plum: true
 projects:
   Ai 工具集:

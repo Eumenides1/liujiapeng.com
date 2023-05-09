@@ -31,6 +31,23 @@ projects:
       link: 'https://handle.jaguarliu.me/'
       desc: 'A Chinese Hanzi variation of Wordle'
       icon: 'i-carbon-scatter-matrix'
+  开源AI:
+    - name: 'DeepSpeed'
+      link: 'https://github.com/microsoft/DeepSpeed'
+      desc: '微软推出用于个人的ChatGPT模型，传闻性能飞快，成本低'
+      icon: 'i-mdi:microsoft-dynamics-365'
+    - name: 'full-body keyboard'
+      link: 'https://github.com/everythingishacked/Semaphore'
+      desc: '微软推出用于个人的ChatGPT模型，传闻性能飞快，成本低'
+      icon: 'i-icon-park:enter-the-keyboard'
+    - name: 'Chat2Stats'
+      link: 'https://chart.2stats.chat/'
+      desc: '一款基于人工智能技术的数据分析平台'
+      icon: 'i-carbon:data-reference'
+    - name: 'JARVIS'
+      link: 'https://github.com/microsoft/JARVIS'
+      desc: '微软推出的私人智能管家'
+      icon: 'i-mdi:robot-confused-outline'
 ---
 
 <ListProjects :projects="frontmatter.projects" />

@@ -1,87 +1,52 @@
 ---
-title: Streams - Anthony Fu
+title: Streams - Jaguarliu
 display: ''
 plum: true
 items:
-  - title: '用 Vue 写个扫雷吧！'
-    date: '2022-03-09'
-    path: 'https://www.bilibili.com/video/BV1ia411b7jY'
-    platform: Bilibili
+  - title: '“AI教父”从谷歌离职，警告AI风险：对自己毕生的工作感到后悔'
+    date: '2023-05-02'
+    path: 'https://mp.weixin.qq.com/s/z6pcfkk5mc8BLhIDBIKCbA'
+    platform: Tencent
     lang: 'zh'
-  - title: '用 Vue 写个扫雷之二'
-    date: '2022-03-12'
-    path: 'https://www.bilibili.com/video/BV15b4y1s7it'
-    platform: Bilibili
-    lang: 'zh'
-  - title: '用 Canvas 做梅花生长动画'
-    date: '2022-03-15'
-    path: 'https://www.bilibili.com/video/BV1wY411n7er'
-    platform: Bilibili
-    lang: 'zh'
-  - title: '实现 UnoCSS 自动补全'
-    date: '2022-03-15'
-    path: 'https://www.bilibili.com/video/BV1y3411W7YG'
-    platform: Bilibili
-    lang: 'zh'
-  - title: '写个聪明的打字机'
-    date: '2022-03-20'
-    path: 'https://www.bilibili.com/video/BV1bZ4y167gz'
-    platform: Bilibili
-    lang: 'zh'
-  - title: '实现 Vite 插件 import.meta.glob'
-    date: '2022-03-27'
-    path: 'https://www.bilibili.com/video/BV1ea411x7zm'
-    platform: Bilibili
-    lang: 'zh'
-  - title: 'Vue 全自动引入黑魔法'
-    date: '2022-03-29'
-    path: 'https://www.bilibili.com/video/BV1L34y147jA'
-    platform: Bilibili
-    lang: 'zh'
-  - title: '起飞！跨路由 Vue 组件动画实验'
-    date: '2022-04-01'
-    path: 'https://www.bilibili.com/video/BV1na41147qR'
-    platform: Bilibili
-    lang: 'zh'
-  - title: '差点坠机！跨路由 Vue 组件动画实验'
-    date: '2022-04-05'
-    path: 'https://www.bilibili.com/video/BV1sa41147qH'
-    platform: Bilibili
-    lang: 'zh'
-  - title: 'Create with Anthony Fu - A World Clock EP1'
-    platform: YouTube
-    date: '2022-06-11'
-    path: 'https://www.youtube.com/watch?v=-EHoncCeg_Y'
+  - title: '吴恩达推出Prompt课程（当前免费）'
+    date: '2023-05-09'
+    path: 'https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/'
+    platform: deeplearning
     lang: 'en'
-  - title: 'Create with Anthony Fu - A World Clock EP2'
-    platform: YouTube
-    date: '2022-06-12'
-    path: 'https://www.youtube.com/watch?v=8vfDZqZLiG8'
+  - title: 'What Is ChatGPT Doing … and Why Does It Work? '
+    date: '2023-05-09'
+    path: 'https://writings.stephenwolfram.com/2023/02/what-is-chatgpt-doing-and-why-does-it-work/'
+    platform: paper
     lang: 'en'
-  - title: 'Live AMA'
-    platform: YouTube
-    date: '2022-06-23'
-    path: 'https://www.youtube.com/watch?v=Am60EtlGm9Y'
-    lang: 'en'
-  - title: '读评论！AMA'
-    date: '2022-06-23'
-    path: 'https://www.bilibili.com/video/BV11W4y167Uu'
-    platform: Bilibili
+  - title: 'Meta逆风翻盘：广告用户都回春，元宇宙不香了卷AI '
+    date: '2023-05-09'
+    path: 'https://mp.weixin.qq.com/s/T4WV4vnT8UhnnMoESQH9wQ'
+    platform: news
     lang: 'zh'
-  - title: '获取包的所有导出函数'
-    date: '2022-06-28'
-    path: 'https://www.bilibili.com/video/BV1Z34y1H7fJ'
-    platform: Bilibili
+  - title: '远望资本程浩：AI大模型创业的生死5问'
+    date: '2023-05-09'
+    path: 'https://mp.weixin.qq.com/s/awbpnSJfJFtnPdhdC0OAjw'
+    platform: talks
     lang: 'zh'
-  - title: 'VueUse 9.0 / Slidev / UnoCSS 一通乱播'
-    date: '2022-07-08'
-    path: 'https://www.bilibili.com/video/BV1qB4y1i76x'
-    platform: Bilibili
+  - title: '到底有没有人在投 AI？AI 赛道第一线实操体感分享 | 42章经'
+    date: '2023-05-09'
+    path: 'https://mp.weixin.qq.com/s/UiiYscg1QXp34ecbHnOJNQ'
+    platform: talks
+    lang: 'zh'
+  - title: '科大讯飞刘聪：中国造大模型或在部分领域超越ChatGPT'
+    date: '2023-05-09'
+    path: 'https://c.m.163.com/news/a/I1O77IHL0514D3UH.html?from=wap_redirect&spss=wap_refluxdl_2018&referFrom='
+    platform: talks
+    lang: 'zh'
+  - title: 'Prompt一键抠图！Meta发布史上首个图像分割基础模型，开创CV新范式'
+    date: '2023-05-09'
+    path: 'https://mp.weixin.qq.com/s/YKts1S8Bd0CyPbs22Cw6gg'
+    platform: talks
     lang: 'zh'
 ---
 
 <SubNav />
 
-> Live stream at [YouTube](https://www.youtube.com/anthonyfu7) & [哔哩哔哩](https://space.bilibili.com/668380)
+> The cutting-edge information of AIGC
 
 <ListPosts :posts="frontmatter.items.reverse()" />

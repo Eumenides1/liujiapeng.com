@@ -18,6 +18,9 @@ const route = useRoute()
       <router-link to="/posts" class="!border-none !font-400" :class="route.path === '/posts' ? '' : inactiveStyle">
         Blog
       </router-link>
+      <router-link to="/streams" class="!border-none !font-400" :class="route.path === '/streams' ? '' : inactiveStyle">
+        Cutting-Edge
+      </router-link>
     </div>
   </div>
 </template>

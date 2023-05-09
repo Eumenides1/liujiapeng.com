@@ -27,6 +27,10 @@ import { isDark } from '~/logics'
           <span class="lt-md:hidden">Tools</span>
           <div i-carbon:chemistry-reference class="md:hidden" />
         </router-link>
+        <router-link to="/ai-projects" title="Demos">
+          <span class="lt-md:hidden">Ai Projects</span>
+          <div i-fluent:brain-circuit-20-regular class="md:hidden" />
+        </router-link>
         <router-link to="/demos" title="Demos">
           <span class="lt-md:hidden">Tweet</span>
           <div i-ri-screenshot-line class="md:hidden" />

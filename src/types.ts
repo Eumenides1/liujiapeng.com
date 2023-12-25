@@ -1,13 +1,17 @@
 export interface Post {
   path: string
   title: string
+  place?: string
   date: string
   lang?: string
   desc?: string
   platform?: string
   duration?: string
   recording?: string
-  upcoming?: boolean
+  radio?: boolean
+  video?: boolean
+  inperson?: boolean
+  redirect?: string
 }
 
 export interface Reference {

@@ -1,9 +1,9 @@
 ---
-title: Projects - Jaguar Liu
+title: Projects - Jaguarliu
 display: Projects
-subtitle: List of projects that I am proud of
 description: List of projects that I am proud of
 plum: true
+wrapperClass: 'text-center'
 projects:
   Latest:
     - name: '瑶池-yaoci'

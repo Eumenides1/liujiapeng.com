@@ -4,7 +4,10 @@ description: Notes about the caveat when using async functions in Vue Compositio
 date: 2021-07-16T08:00:00.000+00:00
 lang: en
 duration: 17min
+tocAlwaysOn: true
 ---
+
+[[toc]]
 
 There is a major caveat when working with asynchronous functions in Vue Composition API, that I believe many of you have ever come across. I have acknowledged it for a while from somewhere, but every time I want to have a detailed reference and share to others, I can't find it's documented anywhere. So, I am thinking about writing one, with a detailed explanation while sorting out the possible solutions for you.
 
@@ -20,7 +23,7 @@ When using asynchronous `setup()`, **you have to use effects and lifecycle hooks
 For example:
 
 ```ts
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 
 export default defineAsyncComponent({
   async setup() {
@@ -37,14 +40,14 @@ export default defineAsyncComponent({
     // does NOT work!
     onUnmounted(() => console.log('Unmounted'))
 
-    // still works, but does not auto-dispose 
+    // still works, but does not auto-dispose
     // after the component is destroyed (memory leak!)
     watch(counter, () => console.log(counter.value * 2))
   }
 })
 ```
 
-After the `await` statement, 
+After the `await` statement,
 
 the following functions will be **limited** (no auto-dispose):
 
@@ -92,10 +95,10 @@ export function mountComponent(component) {
 
   // hooks called inside the `setup()` will have
   // the `currentInstance` as the context
-  component.setup() 
+  component.setup()
 
   // restore the previous instance
-  currentInstance = prev 
+  currentInstance = prev
 }
 ```
 
@@ -124,8 +127,8 @@ The implementation would work based on the fact that JavaScript is **single-thre
 
 ```ts
 currentInstance = instance
-component.setup() 
-currentInstance = prev 
+component.setup()
+currentInstance = prev
 ```
 
 The situation changes when the `setup()` is asynchronous. Whenever you `await` a promise, you can think the engine paused the works here and went to do another task. If we `await` the function, during the time period, multiple components creation will change the global variable unpredictably and end up with a mess.
@@ -133,7 +136,7 @@ The situation changes when the `setup()` is asynchronous. Whenever you `await` a
 ```ts
 currentInstance = instance
 await component.setup() // atomic lost
-currentInstance = prev 
+currentInstance = prev
 ```
 
 If we don't use `await` to check the instance, calling the `setup()` function will make it finish the tasks before the first `await` statement, and the rest will be executed whenever the `await` statement is resolved.
@@ -156,8 +159,7 @@ console.log(4)
 // output:
 3
 1
-4
-(awaiting)
+4(awaiting)
 2
 ```
 
@@ -277,7 +279,7 @@ The way it works is to inject a script after each `await` statement for restorin
 
 ```html
 <script setup>
-const post = await fetch(`/api/post/1`).then((r) => r.json())
+  const post = await fetch(`/api/post/1`).then((r) => r.json())
 </script>
 ```
 
@@ -288,9 +290,9 @@ export default {
   async setup() {
     let __temp, __restore
 
-    const post =
-      (([__temp, __restore] = withAsyncContext(() =>
-        fetch(`/api/post/1`).then((r) => r.json())
+    const post
+      = (([__temp, __restore] = withAsyncContext(() =>
+        fetch(`/api/post/1`).then(r => r.json())
       )),
       (__temp = await __temp),
       __restore(),

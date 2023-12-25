@@ -1,4 +1,5 @@
-import { basename, dirname, resolve } from 'path'
+import { basename, dirname, resolve } from 'node:path'
+import { Buffer } from 'node:buffer'
 import { defineConfig } from 'vite'
 import fs from 'fs-extra'
 import Pages from 'vite-plugin-pages'
@@ -6,20 +7,22 @@ import Inspect from 'vite-plugin-inspect'
 import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
-import Markdown from 'vite-plugin-vue-markdown'
+import Markdown from 'unplugin-vue-markdown/vite'
 import Vue from '@vitejs/plugin-vue'
-import Shiki from 'markdown-it-shiki'
 import matter from 'gray-matter'
 import AutoImport from 'unplugin-auto-import/vite'
 import anchor from 'markdown-it-anchor'
 import LinkAttributes from 'markdown-it-link-attributes'
+import GitHubAlerts from 'markdown-it-github-alerts'
 import UnoCSS from 'unocss/vite'
 import SVG from 'vite-svg-loader'
+import MarkdownItShikiji from 'markdown-it-shikiji'
+import { rendererRich, transformerTwoSlash } from 'shikiji-twoslash'
+
 // @ts-expect-error missing types
 import TOC from 'markdown-it-table-of-contents'
 import sharp from 'sharp'
 import { slugify } from './scripts/slugify'
-import { VitePWA } from 'vite-plugin-pwa'
 
 const promises: Promise<any>[] = []
 
@@ -40,41 +43,21 @@ export default defineConfig({
   },
   plugins: [
     UnoCSS(),
-    VitePWA({
-      manifest: {
-        name: 'Jaguar Liu \' s Blog',
-        short_name: 'Jaguar Blog',
-        icons: [
-          {
-            src: 'jaguarliu.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: 'jaguarliu.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-        ],
-        start_url: '/',
-        display: 'standalone',
-        background_color: '#ffffff',
-        theme_color: '#ffffff',
-      },
-      registerType: 'autoUpdate',
-      devOptions: {
-        enabled: true,
-      },
-    }),
+
     Vue({
       include: [/\.vue$/, /\.md$/],
       reactivityTransform: true,
+      script: {
+        defineModel: true,
+      },
     }),
+
     Pages({
       extensions: ['vue', 'md'],
-      pagesDir: 'pages',
+      dirs: 'pages',
       extendRoute(route) {
         const path = resolve(__dirname, route.component.slice(1))
+
         if (!path.includes('projects.md') && path.endsWith('.md')) {
           const md = fs.readFileSync(path, 'utf-8')
           const { data } = matter(md)
@@ -86,22 +69,35 @@ export default defineConfig({
     }),
 
     Markdown({
-      wrapperComponent: 'post',
-      wrapperClasses: 'prose m-auto',
+      wrapperComponent: id => id.includes('/demo/')
+        ? 'WrapperDemo'
+        : 'WrapperPost',
+      wrapperClasses: (id, code) => code.includes('@layout-full-width')
+        ? ''
+        : 'prose m-auto slide-enter-content',
       headEnabled: true,
+      exportFrontmatter: false,
+      exposeFrontmatter: false,
+      exposeExcerpt: false,
       markdownItOptions: {
         quotes: '""\'\'',
       },
-      markdownItSetup(md) {
-        md.use(Shiki, {
-          theme: {
-            light: 'vitesse-light',
+      async markdownItSetup(md) {
+        md.use(await MarkdownItShikiji({
+          themes: {
             dark: 'vitesse-dark',
+            light: 'vitesse-light',
           },
-        })
-        md.use(TOC, {
-          includeLevel: [1, 2, 3],
-        })
+          defaultColor: false,
+          cssVariablePrefix: '--s-',
+          transformers: [
+            transformerTwoSlash({
+              explicitTrigger: true,
+              renderer: rendererRich(),
+            }),
+          ],
+        }))
+
         md.use(anchor, {
           slugify,
           permalink: anchor.permalink.linkInsideHeader({
@@ -110,7 +106,6 @@ export default defineConfig({
           }),
         })
 
-        // @ts-expect-error anyway
         md.use(LinkAttributes, {
           matcher: (link: string) => /^https?:\/\//.test(link),
           attrs: {
@@ -120,9 +115,12 @@ export default defineConfig({
         })
 
         md.use(TOC, {
-          includeLevel: ['#', '##', '###'],
+          includeLevel: [1, 2, 3, 4],
           slugify,
+          containerHeaderHtml: '<div class="table-of-contents-anchor"><div class="i-ri-menu-2-fill" /></div>',
         })
+
+        md.use(GitHubAlerts)
       },
       frontmatterPreprocess(frontmatter, options, id, defaults) {
         (() => {
@@ -132,8 +130,12 @@ export default defineConfig({
           if (route === 'index' || frontmatter.image || !frontmatter.title)
             return
           const path = `og/${route}.png`
-          promises.push(genreateOg(frontmatter.title!.replace(/\s-\s.*$/, '').trim(), `public/${path}`))
-          frontmatter.image = `https://jaguarliu.me/${path}`
+          promises.push(
+            fs.existsSync(`${id.slice(0, -3)}.png`)
+              ? fs.copy(`${id.slice(0, -3)}.png`, `public/${path}`)
+              : generateOg(frontmatter.title!.replace(/\s-\s.*$/, '').trim(), `public/${path}`),
+          )
+          frontmatter.image = `https://antfu.me/${path}`
         })()
         const head = defaults(frontmatter, options)
         return { head, frontmatter }
@@ -145,7 +147,6 @@ export default defineConfig({
         'vue',
         'vue-router',
         '@vueuse/core',
-        '@vueuse/head',
       ],
     }),
 
@@ -179,6 +180,7 @@ export default defineConfig({
       },
     },
   ],
+
   build: {
     rollupOptions: {
       onwarn(warning, next) {
@@ -196,7 +198,7 @@ export default defineConfig({
 
 const ogSVg = fs.readFileSync('./scripts/og-template.svg', 'utf-8')
 
-async function genreateOg(title: string, output: string) {
+async function generateOg(title: string, output: string) {
   if (fs.existsSync(output))
     return
 

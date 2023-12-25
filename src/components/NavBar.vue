@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { isDark } from '~/logics'
+function toTop() {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  })
+}
+
+const { y: scroll } = useWindowScroll()
 </script>
 
 <template>
@@ -12,29 +19,38 @@ import { isDark } from '~/logics'
       <img v-show="isDark" src="/jaguarliu.svg?url" alt="logo">
       <img v-show="!isDark" src="/jaguarliu.svg?url" alt="logo">
     </router-link>
+    <button
+      title="Scroll to top"
+      fixed right-3 bottom-3 w-10 h-10 hover:op100 rounded-full
+      hover-bg-hex-8883 transition duration-300 z-100 print:hidden
+      :class="scroll > 300 ? 'op30' : 'op0! pointer-events-none'"
+      @click="toTop()"
+    >
+      <div i-ri-arrow-up-line />
+    </button>
     <nav class="nav">
       <div class="spacer" />
-      <div class="right">
-        <router-link to="/posts" title="Blog">
+      <div class="right" print:op0>
+        <RouterLink to="/posts" title="Blog">
           <span class="lt-md:hidden">Blog</span>
           <div i-ri-article-line md:hidden />
-        </router-link>
-        <router-link to="/projects" title="Projects">
+        </RouterLink>
+        <RouterLink to="/projects" title="Projects">
           <span class="lt-md:hidden">Projects</span>
           <div i-ri-lightbulb-line class="md:hidden" />
-        </router-link>
-        <router-link to="/references" title="Reference">
+        </RouterLink>
+        <RouterLink to="/references" title="Reference">
           <span class="lt-md:hidden">Tools</span>
           <div i-carbon:chemistry-reference class="md:hidden" />
-        </router-link>
-        <router-link to="/ai-projects" title="Demos">
+        </RouterLink>
+        <RouterLink to="/ai-projects" title="Demos">
           <span class="lt-md:hidden">Ai Tools</span>
           <div i-fluent:brain-circuit-20-regular class="md:hidden" />
-        </router-link>
-        <router-link to="/demos" title="Demos">
+        </RouterLink>
+        <RouterLink to="/demos" title="Demos">
           <span class="lt-md:hidden">Tweet</span>
           <div i-ri-screenshot-line class="md:hidden" />
-        </router-link>
+        </RouterLink>
         <a href="https://twitter.com/jaguarliu" target="_blank" title="Twitter" class="lt-md:hidden">
           <feather-twitter />
         </a>
@@ -44,7 +60,7 @@ import { isDark } from '~/logics'
         <a href="/feed.xml" target="_blank" title="RSS" class="lt-md:hidden">
           <div i-la-rss-square style="font-size:1.25rem; margin: 0 -0.125rem;" />
         </a>
-        <toggle-theme />
+        <ToggleThem />
       </div>
     </nav>
   </header>

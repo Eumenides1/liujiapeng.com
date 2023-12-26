@@ -1,5 +1,7 @@
 ---
 title: Jaguar Liu
+description: Jaguar Liu's Portfolio
+image: https://antfu.me/og.png
 plum: true
 ---
 

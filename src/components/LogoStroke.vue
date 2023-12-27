@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 27.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+<template>
+ <svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 726.58 702.19" style="enable-background:new 0 0 726.58 702.19;" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:none;stroke:#000000;stroke-miterlimit:10;}
@@ -64,3 +63,54 @@
 <path class="st0" d="M643.17,255.53c0,0-0.72,7.21-9.5,14.59c-8.78,7.38-21.33,13.91-26.04,9.92s4.62-13.23,14.84-18.74
 	C632.69,255.78,643.17,255.53,643.17,255.53z"/>
 </svg>
+</template>
+
+<style scoped>
+@media (prefers-reduced-motion) {
+  path {
+    animation: none !important;
+    stroke-dasharray: unset !important;
+  }
+}
+@media print {
+  path {
+    animation: none !important;
+    stroke-dasharray: unset !important;
+  }
+}
+@keyframes grow {
+  0% {
+    stroke-dashoffset: 1px;
+    stroke-dasharray: 0 350px;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+    transform: translate(0, 1%);
+  }
+  20% {
+    transform: translate(0, 0);
+  }
+  40% {
+    stroke-dasharray: 350px 0;
+  }
+  85% {
+    stroke-dasharray: 350px 0;
+  }
+  95%,
+  to {
+    stroke-dasharray: 0 350px;
+  }
+}
+path {
+  stroke-dashoffset: 1px;
+  stroke-dasharray: 350px 0;
+  animation: grow 10s ease forwards infinite;
+  transform-origin: center;
+  stroke: #303030;
+  animation-delay: 0s;
+}
+.dark path {
+  stroke: #fdfdfd;
+}
+</style>

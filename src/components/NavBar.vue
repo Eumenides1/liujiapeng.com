@@ -11,14 +11,13 @@ const { y: scroll } = useWindowScroll()
 
 <template>
   <header class="header z-40">
-    <router-link
-      class="w-10 h-10 absolute lg:fixed m-6 select-none outline-none"
+    <RouterLink
+      class="w-12 h-12 absolute xl:fixed m-5 select-none outline-none"
       to="/"
       focusable="false"
     >
-      <img v-show="isDark" src="/jaguarliu.svg?url" alt="logo">
-      <img v-show="!isDark" src="/jaguarliu.svg?url" alt="logo">
-    </router-link>
+      <Logo />
+    </RouterLink>
     <button
       title="Scroll to top"
       fixed right-3 bottom-3 w-10 h-10 hover:op100 rounded-full

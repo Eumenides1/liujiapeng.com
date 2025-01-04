@@ -357,3 +357,329 @@ VALUES
 return this.addInsertMappedStatement(mapperClass, modelClass, methodName, sqlSource, keyGenerator, keyProperty, keyColumn);
 ```
 这一步将生成的 SQL 包装成 MyBatis 的 MappedStatement，并交给框架去管理和执行。
+
+那新的疑问产生了，既然有这个方法，且自从 2018年就有了，为什么MyBatis-Plus 里并没有默认使用这个方法呢，我们继续探究。
+
+### insertBatchSomeColumn如何使用
+为什么一个 ORM框架不默认支持一个我们直觉上觉得应该是更快的实现方法呢，问题的要点还是在**快**，那insertBatchSomeColumn究竟快不快，我们还是在同样的场景在，将 saveBatch 切换为我们的insertBatchSomeColumn。
+
+> 因为 MyBatis-Plus 默认并没有直接支持这个方法（需要自己扩展）。接下来，我们将详细介绍如何在项目中正确引入这个“批量插入的快刀”。
+
+#### 第一步：创建自定义 SQL 注入器
+MyBatis-Plus 支持通过扩展 DefaultSqlInjector 来添加自定义 SQL 方法，比如 insertBatchSomeColumn。我们需要新建一个 MySqlInjector 类。
+```java
+public class MySqlInjector extends DefaultSqlInjector {
+
+    @Override
+    public List<AbstractMethod> getMethodList(Configuration configuration, Class<?> mapperClass, TableInfo tableInfo) {
+        // 从全局配置中获取数据库配置
+        GlobalConfig.DbConfig dbConfig = GlobalConfigUtils.getDbConfig(configuration);
+
+        // 构建基础方法列表
+        Stream.Builder<AbstractMethod> builder = Stream.<AbstractMethod>builder()
+                .add(new Insert(dbConfig.isInsertIgnoreAutoIncrementColumn())) // 普通插入
+                .add(new Delete())                                            // 删除
+                .add(new Update())                                            // 更新
+                .add(new SelectCount())                                       // 查询总数
+                .add(new SelectMaps())                                        // 查询 Map 集合
+                .add(new SelectObjs())                                        // 查询单个字段集合
+                .add(new SelectList());                                       // 查询列表
+
+        // 如果表有主键，添加 ById 系列方法
+        if (tableInfo.havePK()) {
+            builder.add(new DeleteById())
+                    .add(new DeleteByIds())
+                    .add(new UpdateById())
+                    .add(new SelectById())
+                    .add(new SelectByIds());
+        } else {
+            logger.warn(String.format("%s ,Not found @TableId annotation, Cannot use Mybatis-Plus 'xxById' Method.",
+                    tableInfo.getEntityType()));
+        }
+
+        // **重点：添加 `insertBatchSomeColumn` 方法**
+        // 这里会自动跳过标记为 `FieldFill.UPDATE` 的字段，确保不会插入更新字段
+        builder.add(new InsertBatchSomeColumn(column -> column.getFieldFill() != FieldFill.UPDATE));
+
+        return builder.build().collect(Collectors.toList());
+    }
+}
+```
+#### 第二步：配置注入器到 MyBatis-Plus
+在项目的 MyBatis-Plus 配置类中，注册我们刚刚创建的 MySqlInjector。
+```java
+@Configuration
+public class MybatisPlusConfig {
+
+    /**
+     * 配置分页插件（如果有分页需求）
+     */
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL)); // MySQL 分页
+        return interceptor;
+    }
+
+    /**
+     * 注册自定义的 SQL 注入器
+     */
+    @Bean
+    public MySqlInjector mySqlInjector() {
+        return new MySqlInjector();
+    }
+}
+```
+#### 第三步：在 Mapper 接口中添加 insertBatchSomeColumn 方法
+MyBatis-Plus 的扩展方法需要你在 Mapper 接口中手动声明，insertBatchSomeColumn 也不例外。
+```java
+@Mapper
+public interface UserMapper extends BaseMapper<User> {
+
+    /**
+     * 批量插入（使用 `insertBatchSomeColumn`）
+     *
+     * @param list 数据集合
+     * @return 插入条数
+     */
+    int insertBatchSomeColumn(@Param("list") List<User> list);
+}
+```
+#### 第四步：在 Service 中调用 insertBatchSomeColumn
+有了扩展的 Mapper 方法，就可以在业务逻辑中直接调用了！和普通的批量插入方法一样，insertBatchSomeColumn 支持直接传入数据列表。
+```java
+@Resource
+private ImUserDataMapper imUserDataMapper;
+
+/**
+ * 批量插入用户数据
+ *
+ * @param userList 用户数据列表
+ */
+public void batchInsertUsers(List<ImUserData> userList) {
+    imUserDataMapper.insertBatchSomeColumn(userList);
+}
+```
+```java
+List<Callable<Void>> tasks = new ArrayList<>();
+    for (List<ImportUserData> batch : userDataBatches) {
+        tasks.add(() -> {
+            List<ImUserData> imUserDataList = batch.stream()
+                    .map(data -> ImUserAdapter.buildImUserData(data, appId))
+                    .collect(Collectors.toList());
+            try {
+                // 批量插入
+                imUserDataDao.batchInsertUsers(imUserDataList);
+                imUserDataList.forEach(user -> successId.add(user.getUserId()));
+            } catch (Exception e) {
+                log.error("批量插入失败: {}", e.getMessage(), e);
+                imUserDataList.forEach(user -> failedId.add(user.getUserId()));
+            }
+            return null;
+        });
+    }
+```
+完成以上步骤之后，我们来测试下insertBatchSomeColumn效果了。结果几乎是可想而知了，这里我就不放图了（偷个懒）20 条数据的插入和 saveBatch 没有区别甚至小胜一筹！
+
+那就更奇怪了，为什么明明性能差不多，为什么不用呢？其实我们可以从insertBatchSomeColumn这个类的注释里发现一些端倪。
+![1735996070663.png](https://www.helloimg.com/i/2025/01/04/6779322c9763a.png)
+这些注释简直堪比“开发者的自我揭发”。
+
+“不同的数据库支持度不一样!!!”这就像一个厨师告诉你：“这道菜在西安吃肯定香，但我只在西安做过，别拿去别的地方埋汰我！”
+
+也就是说insertBatchSomeColumn 只在 MySQL 下测试过，其他数据库你用得好不好，纯靠天意。MySQL 支持多行 VALUES 插入的优化非常好，所以这个方法在 MySQL 中表现很优秀。但如果换成 Oracle、PostgreSQL 甚至 SQLite，性能可能会扑街。
+
+“如果你使用自增有报错或主键值无法回写到 entity, 就不要跑来问为什么了, 因为我也不知道!!!”这句话我理解为“功能能用，但出了问题你就自认倒霉吧。”
+
+看起来吧，其实到了这里，我们几乎就已经能明白，为什么 MyBatis-Plus 的批量没有选用拼接 sql 的这种方式了。但是知道了为什么不用但我还是想知道他们在效率上的优劣。
+
+### 决战紫荆之巅
+我们决定用实验来验证——虽然insertBatchSomeColumn看起来有点问题，但是理论上他应该是更快的，既然 insertBatchSomeColumn 看上去这么“香”，那它在实际场景中到底表现如何？问题的要点还是在“快”，我们来看看它到底“快不快”。
+
+#### 实验场景
+- 表结构：和之前 saveBatch 的实验一样，用一个简单的用户表 user_table。
+- 数据量：1000 条、10,000 条、100,000 条。
+- 测试方法：
+  - 用 saveBatch 插入数据，记录耗时。
+  - 切换为 insertBatchSomeColumn 插入数据，记录耗时。
+  - 比较两者的性能。
+
+这部分代码就比较简单了，简单贴一下：
+```java
+@SpringBootTest
+public class InsertPerformanceTest {
+
+    private static final String LOG_FILE_PATH = "performance-test.log";
+
+    private static final Logger log = LoggerFactory.getLogger(InsertPerformanceTest.class);
+
+    @Resource
+    private ImUserDataMapper imUserDataMapper;
+
+    private static final int[] DATA_SIZES = {100, 1000, 10000,100000}; // 不同数据量
+
+    @Test
+    public void testInsertPerformance() {
+        for (int size : DATA_SIZES) {
+            List<ImUserData> testData = generateTestData(size);
+
+            logToFileAndConsole("=== 测试开始: 数据量 " + size + " ===");
+
+            // 测试逐条插入
+            // measureExecutionTime("逐条插入", () -> insertWithForLoop(testData));
+
+            // 测试批量插入（自定义 SQL）
+            measureExecutionTime("批量插入", () -> insertWithBatch(testData));
+
+            // 测试 InsertBatchSomeColumn
+            measureExecutionTime("InsertBatchSomeColumn 插入", () -> insertWithInsertBatchSomeColumn(testData));
+
+            logToFileAndConsole("=== 测试结束: 数据量 " + size + " ===");
+        }
+    }
+    private void measureExecutionTime(String operationName, Runnable operation) {
+        long start = System.currentTimeMillis();
+        try {
+            operation.run();
+        } catch (Exception e) {
+            logToFileAndConsole(operationName + " 失败: " + e.getMessage());
+        }
+        long end = System.currentTimeMillis();
+        logToFileAndConsole(operationName + " 耗时: " + (end - start) + " ms");
+    }
+
+    // 逐条插入
+    private void insertWithForLoop(List<ImUserData> data) {
+        for (ImUserData user : data) {
+            imUserDataMapper.insert(user);
+        }
+    }
+
+    // 逐条插入
+    private void insertWithBatch(List<ImUserData> data) {
+        imUserDataMapper.insert(data);
+    }
+
+    // MyBatis-Plus 的 InsertBatchSomeColumn
+    private void insertWithInsertBatchSomeColumn(List<ImUserData> data) {
+        imUserDataMapper.insertBatchSomeColumn(data);
+    }
+
+    // 生成测试数据
+    private List<ImUserData> generateTestData(int size) {
+        List<ImUserData> testData = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            ImUserData user = new ImUserData();
+            user.setUserId(IdGenerator.generate(1001));
+            user.setAppId(1001);
+            user.setNickName("测试用户" + i);
+            user.setPassword("password" + i);
+            user.setPhoto("https://example.com/photo" + i);
+            user.setEmail("user" + i + "@example.com");
+            user.setPhone("123456789" + i);
+            user.setUserSex(1);
+            user.setBirthDay("1990-01-01");
+            user.setLocation("测试城市");
+            user.setSelfSignature("测试签名");
+            user.setFriendAllowType(1);
+            user.setForbiddenFlag(0);
+            user.setDisableAddFriend(0);
+            user.setUserType(1);
+            user.setDelFlag(0);
+            testData.add(user);
+        }
+        return testData;
+    }
+
+    private void logToFileAndConsole(String message) {
+        System.out.println(message); // 打印到控制台
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(LOG_FILE_PATH, true))) {
+            writer.write(message);
+            writer.newLine();
+        } catch (IOException e) {
+            System.err.println("日志写入失败: " + e.getMessage());
+        }
+    }
+}
+```
+重要的是测试的结果也是很 amazing：
+![1735997273090.png](https://www.helloimg.com/i/2025/01/04/677936e1258aa.png)
+从图上可以看到，其实数据量不大的时候，批量提交和拼接一条 sql 的效率并不是有很大差异，但是当数据量巨大的时候，拼接 sql 的效率居然明显下降了，这就更难怪MyBatis-Plus 不选用他啦。
+
+
+### 江湖不是打打杀杀
+朋友，这就是江湖的复杂之处。当我们看着 insertBatchSomeColumn 的拼接 SQL，心里已经开始沸腾：“这不就是我想要的批量插入吗？用一条 SQL 搞定一切，岂不是吊打 saveBatch？”
+
+**可是，江湖上有句老话：“想当然的快，不一定是真正的快。”**
+从设计的角度，MyBatis-Plus 没有默认用 insertBatchSomeColumn 是有原因的。简单总结一下，主要有以下几个坑：
+#### 1. 场景局限性：数据量太大，SQL 太长
+
+insertBatchSomeColumn 最大的特点是用一条 SQL 插入多行数据。但是，这种方式有一个致命的短板：数据量太大时，SQL 太长，直接爆掉。
+
+- **问题一：SQL 长度限制**
+  - 大部分数据库对 SQL 语句的长度有限制（比如 MySQL 默认是 4MB）。
+  - 如果你用 insertBatchSomeColumn 插入 10 万条数据，这条 SQL 很可能直接超出限制，报错了事。
+- **问题二：解析压力**
+  - SQL 语句越长，数据库解析 SQL 的时间也越长。
+  - 如果你拼了一个超级长的 VALUES，即使没有超过限制，数据库的解析过程也可能拖慢插入效率。
+
+- **对比saveBatch**：
+  - 它一次只发送一小批数据到数据库（比如 1000 条），SQL 很短，既不会超限，也不会给数据库解析带来太大压力。
+
+#### 2. 适配性问题：不同数据库的行为差异
+ORM 框架最重要的特点是 **“通用性”**，它得让你的代码在 MySQL、PostgreSQL、Oracle 这些数据库上都跑得动。但问题来了，不同数据库对批量插入的支持并不一致。
+- MySQL 的快乐，在 MySQL 中，insertBatchSomeColumn 是天然适配的。VALUES 部分可以支持多个记录，性能也很好。
+- Oracle 的尴尬，Oracle 没有原生的“多行插入”语法，甚至需要用 UNION ALL 来模拟类似功能，效率会差得离谱。
+- PostgreSQL 的问题，PostgreSQL 虽然支持多行 VALUES，但批量插入的性能未必比传统的逐条插入高，具体表现还取决于场景。
+
+- **对比saveBatch**
+  - saveBatch 是基于 JDBC 的 addBatch 和 executeBatch 实现的，JDBC 是数据库驱动的统一接口，各种数据库都支持，兼容性更好。
+
+#### 3. 灵活性：字段动态控制
+insertBatchSomeColumn 的字段是固定的，它会根据 TableInfo 中定义的字段来拼接 SQL。如果你的某条记录需要动态处理某些字段，比如：
+- 某些字段需要特定条件下赋值。
+- 某些字段需要根据数据库默认值处理。
+
+这时候，insertBatchSomeColumn 就显得“呆板”了。
+
+对比saveBatch：saveBatch 的每条记录是独立的，可以动态调整每条记录的字段内容，更灵活。
+
+## 总结：批量插入的江湖哲学
+批量插入看似是开发中的小事，但其实它隐藏着许多复杂性。通过对 MyBatis-Plus 提供的两种插入方式（saveBatch 和 insertBatchSomeColumn）的深度探讨，我们可以得出以下关键结论：
+1. saveBatch：稳健的“江湖中人”
+
+saveBatch 是 MyBatis-Plus 的默认实现，它基于 JDBC 的批处理能力，具有稳定性强、兼容性广、实现简单的特点。无论你的数据库是 MySQL、Oracle，还是 PostgreSQL，saveBatch 都能满足大多数场景的需求。虽然它在性能上可能不如理想中的批量插入快，但它能在数据量大、逻辑复杂的情况下稳稳地完成任务。
+
+适合的场景：
+- 数据量较大（比如超过 10 万条）。
+- 表结构复杂，字段插入需要动态控制。
+- 需要在多种数据库之间切换，追求通用性。
+
+---- 
+
+2. insertBatchSomeColumn：锋利的“武林奇兵”
+
+insertBatchSomeColumn 则是为高性能场景量身定制的“快刀”。它通过动态拼接 SQL，将多条数据用一条 SQL 插入数据库，极大地提升了插入效率。然而，它的优势是建立在特定场景的基础上，比如只支持 MySQL、无法很好处理自增主键、需要开发者精心配置字段等。
+
+适合的场景：
+- 数据库是 MySQL，且对多行 VALUES 优化非常好。
+- 数据量适中（几千到几万条，不超过 SQL 长度限制）。
+- 表结构简单，字段固定，不依赖数据库默认值。
+
+---- 
+
+3. 没有“万能的武功”，只有“适配的选择”
+
+MyBatis-Plus 的设计哲学并不是追求极致的性能，而是追求兼容性和易用性，这也是为什么 saveBatch 是默认实现而非 insertBatchSomeColumn。但对于极端性能需求的场景，insertBatchSomeColumn 无疑是一个值得尝试的选择。
+
+**江湖感言：快与稳，选你所需**
+
+在技术的江湖中，“快”与“稳”总是很难两全。我们希望用 insertBatchSomeColumn 的快刀斩乱麻，但也要记得，这把刀可能只适用于某些特定的“江湖环境”。而 saveBatch 则是那个你永远可以依靠的“老朋友”，即使它不够快，但它足够稳。
+
+最终的选择权，永远掌握在你的手中。无论你选择哪条路，记得：
+- 理解工具的优劣，选择适合场景的实现。
+- 在实验中找到平衡，优化性能的同时确保稳定性。
+- 批量插入只是项目的一部分，别让它拖累你更大的目标。
+
+江湖再见，愿你批量插入的道路畅通无阻！
+

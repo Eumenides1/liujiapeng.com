@@ -12,7 +12,7 @@ const router = useRouter()
 const route = useRoute()
 const content = ref<HTMLDivElement>()
 
-const base = 'https://antfu.me'
+const base = 'https://jaguarliu.me'
 const tweetUrl = computed(() => `https://twitter.com/intent/tweet?text=${encodeURIComponent(`Reading @antfu7\'s ${base}${route.path}\n\nI think...`)}`)
 const elkUrl = computed(() => `https://elk.zone/intent/post?text=${encodeURIComponent(`Reading @antfu@m.webtoo.ls\'s ${base}${route.path}\n\nI think...`)}`)
 
@@ -73,11 +73,24 @@ onMounted(() => {
       setTimeout(navigate, 1000)
   }, 1)
 })
+
+const ArtComponent = computed(() => {
+  let art = frontmatter.art
+  if (art === 'random')
+    art = Math.random() > 0.5 ? 'plum' : 'dots'
+  if (typeof window !== 'undefined') {
+    if (art === 'plum')
+      return defineAsyncComponent(() => import('./ArtPlum.vue'))
+    else if (art === 'dots')
+      return defineAsyncComponent(() => import('./ArtDots.vue'))
+  }
+  return undefined
+})
 </script>
 
 <template>
-  <ClientOnly v-if="frontmatter.plum">
-    <Plum />
+  <ClientOnly v-if="ArtComponent">
+    <component :is="ArtComponent" />
   </ClientOnly>
   <div
     v-if="frontmatter.display ?? frontmatter.title"

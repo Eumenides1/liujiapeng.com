@@ -56,8 +56,8 @@ const { y: scroll } = useWindowScroll()
           <span class="lt-md:hidden">Ai Tools</span>
           <div i-fluent:brain-circuit-20-regular class="md:hidden" />
         </RouterLink>
-        <RouterLink to="/demos" title="Demos">
-          <span class="lt-md:hidden">Tweet</span>
+        <RouterLink to="/link" title="Friends">
+          <span class="lt-md:hidden">Friends</span>
           <div i-ri-screenshot-line class="md:hidden" />
         </RouterLink>
         <a

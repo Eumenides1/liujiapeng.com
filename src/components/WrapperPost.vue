@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { formatDate } from '~/logics'
+import { formatDate, isDark } from '~/logics'
 
 const { frontmatter } = defineProps({
   frontmatter: {
@@ -12,11 +12,28 @@ const router = useRouter()
 const route = useRoute()
 const content = ref<HTMLDivElement>()
 
-const base = 'https://jaguarliu.me'
-const tweetUrl = computed(() => `https://twitter.com/intent/tweet?text=${encodeURIComponent(`Reading @antfu7\'s ${base}${route.path}\n\nI think...`)}`)
-const elkUrl = computed(() => `https://elk.zone/intent/post?text=${encodeURIComponent(`Reading @antfu@m.webtoo.ls\'s ${base}${route.path}\n\nI think...`)}`)
+function loadUtterances() {
+  const script = document.createElement('script')
+  script.src = 'https://utteranc.es/client.js'
+  script.async = true
+  script.setAttribute('repo', 'Eumenides1/liujiapeng.com')
+  script.setAttribute('issue-term', 'pathname')
+  script.setAttribute('label', 'comment')
+  script.setAttribute('theme', isDark.value ? 'github-dark' : 'github-light')
+  script.setAttribute('crossorigin', 'anonymous')
+  const comments = document.getElementById('comments')
+  if (comments) {
+    comments.innerHTML = '' // 防止重复加载
+    comments.appendChild(script)
+  }
+}
 
 onMounted(() => {
+  loadUtterances()
+  // 监听主题切换，重新加载 Utterances
+  watch(isDark, () => {
+    loadUtterances()
+  })
   const navigate = () => {
     if (location.hash) {
       const el = document.querySelector(decodeURIComponent(location.hash))
@@ -92,6 +109,12 @@ const ArtComponent = computed(() => {
 
   return undefined
 })
+
+onBeforeUnmount(() => {
+  const comments = document.getElementById('comments')
+  if (comments)
+    comments.innerHTML = ''// 清理评论区
+})
 </script>
 
 <template>
@@ -138,13 +161,16 @@ const ArtComponent = computed(() => {
     <slot />
   </article>
   <div v-if="route.path !== '/'" class="prose m-auto mt-8 mb-8 slide-enter animate-delay-500 print:hidden">
-    <template v-if="frontmatter.duration">
+    <div id="comments" class="prose m-auto mt-8 mb-8 slide-enter animate-delay-500 print:hidden">
+      <h3>Comments</h3>
+    </div>
+    <!-- <template v-if="frontmatter.duration">
       <span font-mono op50>> </span>
       <span op50>comment on </span>
       <a :href="elkUrl" target="_blank" op50>mastodon</a>
       <span op25> / </span>
       <a :href="tweetUrl" target="_blank" op50>twitter</a>
-    </template>
+    </template> -->
     <br>
     <span font-mono op50>> </span>
     <RouterLink
@@ -154,3 +180,10 @@ const ArtComponent = computed(() => {
     />
   </div>
 </template>
+
+<style scoped>
+#comments {
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+</style>

@@ -77,20 +77,26 @@ onMounted(() => {
 const ArtComponent = computed(() => {
   let art = frontmatter.art
   if (art === 'random')
-    art = Math.random() > 0.5 ? 'plum' : 'dots'
+    art = ['plum', 'dots', 'particle'][Math.floor(Math.random() * 3)]
+
   if (typeof window !== 'undefined') {
     if (art === 'plum')
       return defineAsyncComponent(() => import('./ArtPlum.vue'))
     else if (art === 'dots')
       return defineAsyncComponent(() => import('./ArtDots.vue'))
+    else if (art === 'particle')
+      return defineAsyncComponent(() => import('./ArtParticle.vue'))
+    else if (art === 'matrix')
+      return defineAsyncComponent(() => import('./ArtMatrix.vue'))
   }
+
   return undefined
 })
 </script>
 
 <template>
   <ClientOnly v-if="ArtComponent">
-    <component :is="ArtComponent" />
+    <component :is="ArtComponent" v-if="ArtComponent" />
   </ClientOnly>
   <div
     v-if="frontmatter.display ?? frontmatter.title"

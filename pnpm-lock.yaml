@@ -149,8 +149,8 @@ devDependencies:
     specifier: ^0.8.0
     version: 0.8.0
   p5i:
-    specifier: ^0.5.0
-    version: 0.5.0
+    specifier: ^0.6.0
+    version: 0.6.0
   picocolors:
     specifier: ^1.1.1
     version: 1.1.1
@@ -1578,10 +1578,6 @@ packages:
 
   /@types/nprogress@0.2.3:
     resolution: {integrity: sha512-k7kRA033QNtC+gLc4VPlfnue58CM1iQLgn1IMAU8VPHGOj7oIHPp9UlhedEnD/Gl8evoCjwkZjlBORtZ3JByUA==}
-    dev: true
-
-  /@types/p5@1.7.6:
-    resolution: {integrity: sha512-6pLTOo0V3N5jZb5nTwjiv3lPHLK3Z/TjbhQUj8CTWXocUk1Z/f6OHTp3Pcwi1BhWnf5gqKUcyEb1gP0KIJuQgw==}
     dev: true
 
   /@types/prompts@2.4.9:
@@ -4975,15 +4971,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /p5@1.11.2:
-    resolution: {integrity: sha512-kvtMTmxJexkbfuaVThg/1JE6iQyS8tTAqGE1UGbfApKUIzDc5hHM23hc08FV3jG0jlNS2En9kqZDb4FrJ8x+kg==}
-    dev: true
-
-  /p5i@0.5.0:
-    resolution: {integrity: sha512-ahLCSoab5pD6fCpqxLcXhDPyDIrJHQpeGDeC4RDouflWJuXi0LVsGjbwS/ODLkpXRfLTHzV6C9t32kz3iMuPBA==}
-    dependencies:
-      '@types/p5': 1.7.6
-      p5: 1.11.2
+  /p5i@0.6.0:
+    resolution: {integrity: sha512-Hw+J6Fq0ovVnC/h+6wInwZZyAu63eUzFW030+OksWs+MGftExxckKpKG8BRMQakj27oLpVwZEt63jNO17fYwcw==}
     dev: true
 
   /package-json-from-dist@1.0.1:

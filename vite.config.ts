@@ -42,6 +42,8 @@ export default defineConfig({
       '@vueuse/core',
       'dayjs',
       'dayjs/plugin/localizedFormat',
+      'p5',
+      'p5i',
     ],
   },
   plugins: [

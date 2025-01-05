@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps<{ projects: Record<string, any[]> }>();
+defineProps<{ projects: Record<string, any[]> }>()
 </script>
 
 <template>

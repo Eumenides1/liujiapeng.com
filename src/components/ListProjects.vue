@@ -1,8 +1,8 @@
 <script setup lang="ts">
-defineProps<{ projects: Record<string, any[]> }>();
+defineProps<{ projects: Record<string, any[]> }>()
 
 function slug(name: string) {
-  return name.toLowerCase().replace(/[\s\\/]+/g, "-");
+  return name.toLowerCase().replace(/[\s\\/]+/g, '-')
 }
 </script>
 

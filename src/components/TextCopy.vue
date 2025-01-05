@@ -1,9 +1,9 @@
 <script setup lang="ts">
-const { copy: _copy, copied } = useClipboard();
-const el = ref<HTMLElement | null>(null);
+const { copy: _copy, copied } = useClipboard()
+const el = ref<HTMLElement | null>(null)
 
 function copy() {
-  _copy((el.value?.textContent || "").trim());
+  _copy((el.value?.textContent || '').trim())
 }
 </script>
 

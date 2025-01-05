@@ -259,25 +259,25 @@ plum: true
 那么这两种方式，哪一种更快呢？来实验一下：
 
 ```jsx
-const length = 10000;
+const length = 10000
 // 增加一万个dom节点，耗时 3.992919921875 ms
-console.time("element");
+console.time('element')
 for (let i = 0; i < length; i++) {
-  const newEle = document.createElement("div");
-  document.body.appendChild(newEle);
+  const newEle = document.createElement('div')
+  document.body.appendChild(newEle)
 }
-console.timeEnd("element");
+console.timeEnd('element')
 
 // 增加一万个 js 对象，耗时 0.402099609375 ms
-console.time("js");
-const divList = [];
+console.time('js')
+const divList = []
 for (let i = 0; i < length; i++) {
   const newEle = {
-    type: "div",
-  };
-  divList.push(newEle);
+    type: 'div',
+  }
+  divList.push(newEle)
 }
-console.timeEnd("js");
+console.timeEnd('js')
 ```
 
 从测试情况来看`dom` 的操作要比 `js` 的操作耗时多得多，即：**`dom` 操作比 `js` 更加耗费性能**。

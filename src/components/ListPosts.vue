@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import type { Post } from "~/types";
-import { useRouter } from "vue-router";
-import { englishOnly, formatDate } from "~/logics";
+import type { Post } from '~/types'
+import { useRouter } from 'vue-router'
+import { englishOnly, formatDate } from '~/logics'
 
 const props = defineProps<{
-  type?: string;
-  posts?: Post[];
-  extra?: Post[];
-}>();
+  type?: string
+  posts?: Post[]
+  extra?: Post[]
+}>()
 
-const router = useRouter();
+const router = useRouter()
 const routes: Post[] = router
   .getRoutes()
   .filter(
-    (i) =>
-      i.path.startsWith("/posts") &&
-      i.meta.frontmatter.date &&
-      !i.meta.frontmatter.draft,
+    i =>
+      i.path.startsWith('/posts')
+      && i.meta.frontmatter.date
+      && !i.meta.frontmatter.draft,
   )
   .filter(
-    (i) =>
-      !i.path.endsWith(".html") &&
-      (i.meta.frontmatter.type || "blog").split("+").includes(props.type),
+    i =>
+      !i.path.endsWith('.html')
+      && (i.meta.frontmatter.type || 'blog').split('+').includes(props.type),
   )
-  .map((i) => ({
+  .map(i => ({
     path: i.meta.frontmatter.redirect || i.path,
     title: i.meta.frontmatter.title,
     date: i.meta.frontmatter.date,
@@ -33,33 +33,36 @@ const routes: Post[] = router
     upcoming: i.meta.frontmatter.upcoming,
     redirect: i.meta.frontmatter.redirect,
     place: i.meta.frontmatter.place,
-  }));
+  }))
 
 const posts = computed(() =>
   [...(props.posts || routes), ...(props.extra || [])]
     .sort((a, b) => +new Date(b.date) - +new Date(a.date))
-    .filter((i) => !englishOnly.value || i.lang !== "zh"),
-);
+    .filter(i => !englishOnly.value || i.lang !== 'zh'),
+)
 
-const getYear = (a: Date | string | number) => new Date(a).getFullYear();
-const isFuture = (a?: Date | string | number) => a && new Date(a) > new Date();
+const getYear = (a: Date | string | number) => new Date(a).getFullYear()
+const isFuture = (a?: Date | string | number) => a && new Date(a) > new Date()
 function isSameYear(a?: Date | string | number, b?: Date | string | number) {
-  return a && b && getYear(a) === getYear(b);
+  return a && b && getYear(a) === getYear(b)
 }
 function isSameGroup(a: Post, b?: Post) {
-  return isFuture(a.date) === isFuture(b?.date) && isSameYear(a.date, b?.date);
+  return isFuture(a.date) === isFuture(b?.date) && isSameYear(a.date, b?.date)
 }
 
 function getGroupName(p: Post) {
-  if (isFuture(p.date)) return "Upcoming";
-  return getYear(p.date);
+  if (isFuture(p.date))
+    return 'Upcoming'
+  return getYear(p.date)
 }
 </script>
 
 <template>
   <ul>
     <template v-if="!posts.length">
-      <div py2 op50>{ nothing here yet }</div>
+      <div py2 op50>
+        { nothing here yet }
+      </div>
     </template>
 
     <template v-for="(route, idx) in posts" :key="route.path">
@@ -85,8 +88,7 @@ function getGroupName(p: Post) {
           text-stroke-2
           text-stroke-hex-aaa
           op10
-          >{{ getGroupName(route) }}</span
-        >
+        >{{ getGroupName(route) }}</span>
       </div>
       <div
         class="slide-enter"
@@ -100,13 +102,13 @@ function getGroupName(p: Post) {
           v-bind="
             route.path.includes('://')
               ? {
-                  href: route.path,
-                  target: '_blank',
-                  rel: 'noopener noreferrer',
-                }
+                href: route.path,
+                target: '_blank',
+                rel: 'noopener noreferrer',
+              }
               : {
-                  to: route.path,
-                }
+                to: route.path,
+              }
           "
           class="item block font-normal mb-6 mt-2 no-underline"
         >
@@ -117,8 +119,7 @@ function getGroupName(p: Post) {
                 align-middle
                 flex-none
                 class="text-xs bg-zinc:15 text-zinc5 rounded px-1 py-0.5 ml--12 mr2 my-auto hidden md:block"
-                >中文</span
-              >
+              >中文</span>
               <span align-middle>{{ route.title }}</span>
             </div>
 
@@ -162,22 +163,15 @@ function getGroupName(p: Post) {
               <span text-sm op50 ws-nowrap>
                 {{ formatDate(route.date, true) }}
               </span>
-              <span v-if="route.duration" text-sm op40 ws-nowrap
-                >· {{ route.duration }}</span
-              >
-              <span v-if="route.platform" text-sm op40 ws-nowrap
-                >· {{ route.platform }}</span
-              >
-              <span v-if="route.place" text-sm op40 ws-nowrap md:hidden
-                >· {{ route.place }}</span
-              >
+              <span v-if="route.duration" text-sm op40 ws-nowrap>· {{ route.duration }}</span>
+              <span v-if="route.platform" text-sm op40 ws-nowrap>· {{ route.platform }}</span>
+              <span v-if="route.place" text-sm op40 ws-nowrap md:hidden>· {{ route.place }}</span>
               <span
                 v-if="route.lang === 'zh'"
                 align-middle
                 flex-none
                 class="text-xs bg-zinc:15 text-zinc5 rounded px-1 py-0.5 my-auto md:hidden"
-                >中文</span
-              >
+              >中文</span>
             </div>
           </li>
           <div v-if="route.place" op50 text-sm hidden mt--2 md:block>

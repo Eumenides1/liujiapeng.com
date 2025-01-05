@@ -63,12 +63,12 @@ Inspired by [PurgeCSS](https://purgecss.com/), I made the tool called [PurgeIcon
 Along with [the Vite plugin](https://github.com/antfu/purge-icons/tree/main/packages/vite-plugin-purge-icons/README.md), you can simplify import this inline in your app's entry, and the icons you use will be bundled into your code and load them synchronously.
 
 ```ts
-import { createApp } from "vue";
-import App from "./App.vue";
+import { createApp } from 'vue'
+import App from './App.vue'
 
-import "@purge-icons/generated"; // <-- This
+import '@purge-icons/generated' // <-- This
 
-createApp(App).mount("#app");
+createApp(App).mount('#app')
 ```
 
 It also provides a CLI tool and plugins for [Webpack](https://github.com/antfu/purge-icons/tree/main/packages/purge-icons-webpack-plugin) and [Rollup](https://github.com/antfu/purge-icons/tree/main/packages/rollup-plugin-purge-icons). More frameworks support like Vue CLI, Nuxt, Gridsome or even plain html are coming soon.

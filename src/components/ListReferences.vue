@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps<{ references: Record<string, any[]> }>();
+defineProps<{ references: Record<string, any[]> }>()
 </script>
 
 <template>

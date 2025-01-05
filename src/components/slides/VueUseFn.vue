@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps<{
-  name: string;
-}>();
+  name: string
+}>()
 </script>
 
 <template>
@@ -9,12 +9,10 @@ defineProps<{
     <img
       src="https://vueuse.org/favicon.svg"
       class="h-1.5rem !w-1.5rem !my-0 flex-none"
-    />
-    <span class="opacity-75">Avaliable in VueUse: </span
-    ><a
+    >
+    <span class="opacity-75">Avaliable in VueUse: </span><a
       class="ml-2 font-mono opacity-75 hover:opacity-100"
       :href="`https://vueuse.org/${name}`"
-      >{{ name }}</a
-    >
+    >{{ name }}</a>
   </div>
 </template>

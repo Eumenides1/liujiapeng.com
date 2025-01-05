@@ -15,13 +15,10 @@
       <a
         href="https://www.youtube.com/playlist?list=PL4ETc_mXFfxUGiY852jH3ctljnI2e9Rax"
         target="_blank"
-        >YouTube</a
-      >
+      >YouTube</a>
       every <span font-600>Tuesday</span> and <span font-600>Thursday</span> at
       <a href="https://www.google.com/search?q=1pm+utc">1pm UTC</a>, bulding
-      <a href="https://github.com/nuxt/learn.nuxt.com" target="_blank"
-        >Nuxt Playground</a
-      >
+      <a href="https://github.com/nuxt/learn.nuxt.com" target="_blank">Nuxt Playground</a>
       from scratch.
     </div>
     <div aspect="16/9" relative>

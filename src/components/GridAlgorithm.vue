@@ -1,66 +1,66 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { useRouter } from "vue-router";
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 // 路由对象
-const router = useRouter();
+const router = useRouter()
 
 // 获取所有算法题
 const allAlgorithms = computed(() =>
   router
     .getRoutes()
     .filter(
-      (route) =>
-        route.path.startsWith("/algorithm") &&
-        route.meta.frontmatter &&
-        route.path !== "/algorithm",
+      route =>
+        route.path.startsWith('/algorithm')
+        && route.meta.frontmatter
+        && route.path !== '/algorithm',
     )
-    .map((route) => ({
+    .map(route => ({
       path: route.path,
       ...route.meta.frontmatter,
     })),
-);
+)
 
 // 筛选条件
-const selectedDifficulty = ref<string | null>(null);
-const selectedTag = ref<string | null>(null);
+const selectedDifficulty = ref<string | null>(null)
+const selectedTag = ref<string | null>(null)
 
 // 筛选后的算法列表
 const filteredAlgorithms = computed(() => {
   return allAlgorithms.value.filter((algorithm) => {
     const matchesDifficulty = selectedDifficulty.value
       ? algorithm.difficulty === selectedDifficulty.value
-      : true;
+      : true
     const matchesTag = selectedTag.value
       ? algorithm.tags?.includes(selectedTag.value)
-      : true;
-    return matchesDifficulty && matchesTag;
-  });
-});
+      : true
+    return matchesDifficulty && matchesTag
+  })
+})
 
 // 获取难度和标签
 const difficulties = computed(() =>
-  Array.from(new Set(allAlgorithms.value.map((a) => a.difficulty))),
-);
+  Array.from(new Set(allAlgorithms.value.map(a => a.difficulty))),
+)
 const tags = computed(() =>
-  Array.from(new Set(allAlgorithms.value.flatMap((a) => a.tags || []))),
-);
+  Array.from(new Set(allAlgorithms.value.flatMap(a => a.tags || []))),
+)
 
 // 控制标签展开和收起
-const showAllTags = ref(false); // 是否显示所有标签
+const showAllTags = ref(false) // 是否显示所有标签
 const visibleTags = computed(
   () => (showAllTags.value ? tags.value : tags.value.slice(0, 5)), // 默认显示前5个标签
-);
+)
 function toggleTags() {
-  showAllTags.value = !showAllTags.value;
+  showAllTags.value = !showAllTags.value
 }
 
 // 更新筛选条件
 function selectDifficulty(difficulty: string | null) {
-  selectedDifficulty.value = difficulty;
+  selectedDifficulty.value = difficulty
 }
 function selectTag(tag: string | null) {
-  selectedTag.value = tag;
+  selectedTag.value = tag
 }
 </script>
 
@@ -113,7 +113,9 @@ function selectTag(tag: string | null) {
         class="grid-item"
       >
         <div class="item-header">
-          <div class="item-id">#{{ algorithm.id }}</div>
+          <div class="item-id">
+            #{{ algorithm.id }}
+          </div>
           <div class="item-title">
             {{ algorithm.title }}
           </div>
@@ -132,7 +134,7 @@ function selectTag(tag: string | null) {
 <style scoped>
 .grid-algorithm {
   padding: 20px;
-  font-family: "Arial", sans-serif;
+  font-family: 'Arial', sans-serif;
 }
 
 h1 {
@@ -202,11 +204,11 @@ h1 {
 }
 
 .icon-up::before {
-  content: "▲";
+  content: '▲';
 }
 
 .icon-down::before {
-  content: "▼";
+  content: '▼';
 }
 
 /* 算法网格 */

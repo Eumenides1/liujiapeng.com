@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { isDark } from '../logics'
+import { isDark } from "../logics";
 
 defineProps<{
-  conversation?: 'none'
-}>()
+  conversation?: "none";
+}>();
 
 onMounted(() => {
   // @ts-expect-error cdn
-  window?.twttr.widgets.load()
-})
+  window?.twttr.widgets.load();
+});
 </script>
 
 <template>

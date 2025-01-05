@@ -1,6 +1,6 @@
 ---
 title: Giving Talks - Anthony Fu
-display: ''
+display: ""
 ---
 
 # Giving Talks

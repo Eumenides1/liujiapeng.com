@@ -1,6 +1,6 @@
 ---
 title: Blog - Jaguar Liu
-display: ''
+display: ""
 art: plum
 ---
 

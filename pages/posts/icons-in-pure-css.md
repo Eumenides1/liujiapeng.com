@@ -1,5 +1,5 @@
 ---
-title: Icons in Pure CSS 
+title: Icons in Pure CSS
 date: 2021-10-31T16:00:00Z
 lang: en
 duration: 10min
@@ -19,7 +19,7 @@ If you are interested in how I get here, there is an index of my previous post a
 - Aug. 2020 - [Journey with Icons](/posts/journey-with-icons)
 - Sep. 2021 - [Journey with Icons Continues](/posts/journey-with-icons-continues)
 - Oct. 2021 - [Reimagine Atomic CSS (The CSS Icons Preset)](/posts/reimagine-atomic-css#pure-css-icons)
-- Nov. 2021 - Icons in Pure CSS - *you are here!*
+- Nov. 2021 - Icons in Pure CSS - _you are here!_
 
 ## Prior Arts
 
@@ -45,7 +45,7 @@ With that, we could use any images inlined in CSS with a single class.
 <div grid="~ cols-2">
 
 ```html
-<div class="my-icon"></div> 
+<div class="my-icon"></div>
 ```
 
 <div i-twemoji-grinning-face text-5xl my-auto mx-4 />
@@ -60,16 +60,16 @@ It's indeed an interesting idea. However, this is more like an image instead of 
 Thanks again to [Iconify](https://iconify.design/), which unified 100+ icon sets with 10,000+ icons into [the consistent JSON format](https://github.com/iconify/collections-json). It allows us to get the SVG of any icon set by simply providing the collection and icon ids. The usage is like this:
 
 ```ts
-import { iconToSVG, getIconData } from '@iconify/utils'
+import { getIconData, iconToSVG } from "@iconify/utils";
 
-const svg = iconToSVG(getIconData('mdi', 'alarm'))
+const svg = iconToSVG(getIconData("mdi", "alarm"));
 // (this is not the exact API, simplified here for demo)
 ```
 
 Once we got the SVG string, we could convert the it to DataURI:
 
 ```ts
-const dataUri = `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`
+const dataUri = `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
 ```
 
 Talking about DataURI, it's almost the default choice to use [Base64](https://developer.mozilla.org/en-US/docs/Glossary/Base64) until I read [Probably Don't Base64 SVG](https://css-tricks.com/probably-dont-base64-svg/) by Chris Coyier. Base64 is needed to encode binary data like images to be used in plain text files like CSS, while for SVG, since it's already in text format, the extra encoding to Base64 actually makes the file size larger.
@@ -79,17 +79,23 @@ Combine the technique mentioned in [Optimizing SVGs in data URIs](https://codepe
 ```ts
 // https://bl.ocks.org/jennyknuth/222825e315d45a738ed9d6e04c7a88d0
 function encodeSvg(svg: string) {
-  return svg.replace('<svg', (~svg.indexOf('xmlns') ? '<svg' : '<svg xmlns="http://www.w3.org/2000/svg"'))
-    .replace(/"/g, '\'')
-    .replace(/%/g, '%25')
-    .replace(/#/g, '%23')
-    .replace(/{/g, '%7B')
-    .replace(/}/g, '%7D')
-    .replace(/</g, '%3C')
-    .replace(/>/g, '%3E')
+  return svg
+    .replace(
+      "<svg",
+      ~svg.indexOf("xmlns")
+        ? "<svg"
+        : '<svg xmlns="http://www.w3.org/2000/svg"',
+    )
+    .replace(/"/g, "'")
+    .replace(/%/g, "%25")
+    .replace(/#/g, "%23")
+    .replace(/\{/g, "%7B")
+    .replace(/\}/g, "%7D")
+    .replace(/</g, "%3C")
+    .replace(/>/g, "%3E");
 }
 
-const dataUri = `data:image/svg+xml;utf8,${encodeSvg(svg)}`
+const dataUri = `data:image/svg+xml;utf8,${encodeSvg(svg)}`;
 ```
 
 ### Scalable
@@ -166,31 +172,29 @@ So the solution is actually pretty simple, we just need to find a way to disting
 ```ts
 // if an SVG icon have the `currentColor` value,
 // it's very likely to be a monochrome icon
-const mode = svg.includes('currentColor')
-  ? 'mask'
-  : 'background-img'
+const mode = svg.includes("currentColor") ? "mask" : "background-img";
 
-const uri = `url("data:image/svg+xml;utf8,${encodeSvg(svg)}")`
+const uri = `url("data:image/svg+xml;utf8,${encodeSvg(svg)}")`;
 
 // monochrome
-if (mode === 'mask') {
+if (mode === "mask") {
   return {
-    'mask': `${uri} no-repeat`,
-    'mask-size': '100% 100%',
-    'background-color': 'currentColor',
-    'height': '1em',
-    'width': '1em',
-  }
+    mask: `${uri} no-repeat`,
+    "mask-size": "100% 100%",
+    "background-color": "currentColor",
+    height: "1em",
+    width: "1em",
+  };
 }
 // colored
 else {
   return {
-    'background': `${uri} no-repeat`,
-    'background-size': '100% 100%',
-    'background-color': 'transparent',
-    'height': '1em',
-    'width': '1em',
-  }
+    background: `${uri} no-repeat`,
+    "background-size": "100% 100%",
+    "background-color": "transparent",
+    height: "1em",
+    width: "1em",
+  };
 }
 ```
 
@@ -223,31 +227,31 @@ npm i -D unocss @unocss/preset-icons @iconify/json
 Then in your `vite.config.js`
 
 ```ts
-import { defineConfig } from 'vite'
-import UnoCSS from 'unocss'
-import UnocssIcons from '@unocss/preset-icons'
+import UnocssIcons from "@unocss/preset-icons";
+import UnoCSS from "unocss";
+import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
     UnoCSS({
       // when `presets` is specified, the default preset will be disabled
       // so you could only use the pure CSS icons in addition to your
-      // existing app without polluting other CSS 
+      // existing app without polluting other CSS
       presets: [
         UnocssIcons({
           // options
-          prefix: 'i-',
+          prefix: "i-",
           extraProperties: {
-            display: 'inline-block'
-          }
+            display: "inline-block",
+          },
         }),
         // presetUno() - if you want to use other atomic CSS as well
       ],
     }),
   ],
-})
+});
 ```
 
 And that's it for today. Hope you enjoy this icons solution from UnoCSS, or get some inspiration from it for your own projects.
 
-Thanks for reading, and see you :) 
+Thanks for reading, and see you :)

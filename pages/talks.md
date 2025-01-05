@@ -1,6 +1,6 @@
 ---
 title: Talks - Anthony Fu
-display: ''
+display: ""
 plum: true
 ---
 

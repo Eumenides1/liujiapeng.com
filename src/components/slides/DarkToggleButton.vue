@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isDark, toggleDark } from '~/logics'
+import { isDark, toggleDark } from "~/logics";
 </script>
 
 <template>
@@ -9,7 +9,7 @@ import { isDark, toggleDark } from '~/logics'
   >
     <div class="flex">
       <div i-ri-sun-line dark:i-ri-moon-line />
-      <span class="mr-1 ml-2">{{ isDark ? 'Dark' : 'Light' }}</span>
+      <span class="mr-1 ml-2">{{ isDark ? "Dark" : "Light" }}</span>
     </div>
   </button>
 </template>

@@ -37,23 +37,25 @@ Hello 大家好，非常感谢丁香园这次的邀请，也非常荣幸能够�
 在 Vue 3 里面，我们对整个响应式系统做了一个重新的设计，同时暴露出了这几个新的API，`ref` `reactive` `computed` `effect`。我们把原本 Vue 2 `Object.defineProperty` 的实现改成了使用 `Proxy` 的实现方式。而 Proxy 可以给我们提供对属性更新监控的更大的灵活性。
 
 ```ts
-const reactive = target => new Proxy(target, {
-  get(target, prop, receiver) {
-    track(target, prop)
-    return Reflect.get(...arguments) // get original data
-  },
-  set(target, key, value, receiver) {
-    trigger(target, key)
-    return Reflect.set(...arguments)
-  }
-})
+function reactive(target) {
+  return new Proxy(target, {
+    get(target, prop, receiver) {
+      track(target, prop);
+      return Reflect.get(...arguments); // get original data
+    },
+    set(target, key, value, receiver) {
+      trigger(target, key);
+      return Reflect.set(...arguments);
+    },
+  });
+}
 
 const obj = reactive({
-  hello: 'world'
-})
+  hello: "world",
+});
 
-console.log(obj.hello) // `track()` get called
-obj.hello = 'vue' // `trigger()` get called
+console.log(obj.hello); // `track()` get called
+obj.hello = "vue"; // `trigger()` get called
 ```
 
 我们可以通过 `get` 和 `set` 这两个 handler 去追踪每一个属性的访问和修改，在这个例子中我们在 `get` 里注入了 `track` 这个函数，在 `set` 里注入了`trigger` 这个函数。那么在对 `reactive` 这个对象的 `hello` 属性进行访问的时候 `track` 就会被执行，在对 `obj.hello` 进行赋值的时候，`trigger` 就会被执行。通过 `track` 和 `trigger` 我们就可以进行一些响应式的追踪。
@@ -63,24 +65,29 @@ obj.hello = 'vue' // `trigger()` get called
 `effect` 是在 Vue 3 里面新引入的一个API，它的作用就是去结合 `track` 和 `trigger` 这两个功能，`track` 的作用是追踪调用他的函数，`trigger` 是去触发绑定的依赖更新。
 
 ```ts
-const targetMap = new WeakMap()
+const targetMap = new WeakMap();
 
-export const track = (target, key) => {
+export function track(target, key) {
   if (tacking && activeEffect)
-    targetMap.get(target).key(key).push(activeEffect)
+    targetMap.get(target).key(key).push(activeEffect);
 }
 
-export const trigger = (target, key) => {
-  targetMap.get(target).key(key).forEach(effect => effect())
+export function trigger(target, key) {
+  targetMap
+    .get(target)
+    .key(key)
+    .forEach((effect) => effect());
 }
 
-export const effect = (fn) => {
-  const effect = function () { fn() }
-  enableTracking()
-  activeEffect = effect
-  fn()
-  resetTracking()
-  activeEffect = undefined
+export function effect(fn) {
+  const effect = function () {
+    fn();
+  };
+  enableTracking();
+  activeEffect = effect;
+  fn();
+  resetTracking();
+  activeEffect = undefined;
 }
 ```
 
@@ -91,26 +98,26 @@ export const effect = (fn) => {
 在 Vue 3.0 里面，`computed` 和 `watch` 都是基于 `effect` 的包装，我们这边可以看到一个简单的 `computed` 的实现
 
 ```ts
-const computed = (getter) => {
-  let value
-  let dirty = true
+function computed(getter) {
+  let value;
+  let dirty = true;
 
   const runner = effect(getter, {
     lazy: true,
     scheduler() {
-      dirty = true // deps changed
-    }
-  })
+      dirty = true; // deps changed
+    },
+  });
 
   return {
     get value() {
       if (dirty) {
-        value = runner() // re-evaluate
-        dirty = false
+        value = runner(); // re-evaluate
+        dirty = false;
       }
-      return value
-    }
-  }
+      return value;
+    },
+  };
 }
 ```
 
@@ -136,8 +143,8 @@ const computed = (getter) => {
 
 ```html
 <template>
-  <div :class='{dark}'>
-    <button @click='toggleDark'>Toggle</button>
+  <div :class="{dark}">
+    <button @click="toggleDark">Toggle</button>
   </div>
 </template>
 ```
@@ -148,18 +155,18 @@ const computed = (getter) => {
 
 ```html
 <script>
-export default {
-  data() {
-    return {
-      dark: false
-    }
-  },
-  methods: {
-    toggleDark() {
-      this.dark = !this.dark
-    }
-  }
-}
+  export default {
+    data() {
+      return {
+        dark: false,
+      };
+    },
+    methods: {
+      toggleDark() {
+        this.dark = !this.dark;
+      },
+    },
+  };
 </script>
 ```
 
@@ -173,30 +180,30 @@ export default {
 
 ```html
 <script>
-// Options API
-export default {
-  data() {
-    return {
-      dark: false,
-      media: window.matchMedia('(prefers-color-scheme: dark)')
-    }
-  },
-  methods: {
-    toggleDark() {
-      this.dark = !this.dark
+  // Options API
+  export default {
+    data() {
+      return {
+        dark: false,
+        media: window.matchMedia("(prefers-color-scheme: dark)"),
+      };
     },
-    update() {
-      this.dark = this.media.matches
-    }
-  },
-  created() {
-    this.media.addEventListener('change', this.update)
-    this.update()
-  },
-  destroyed() {
-    this.media.removeEventListener('change', this.update)
-  }
-}
+    methods: {
+      toggleDark() {
+        this.dark = !this.dark;
+      },
+      update() {
+        this.dark = this.media.matches;
+      },
+    },
+    created() {
+      this.media.addEventListener("change", this.update);
+      this.update();
+    },
+    destroyed() {
+      this.media.removeEventListener("change", this.update);
+    },
+  };
 </script>
 ```
 
@@ -206,30 +213,30 @@ export default {
 
 ```html
 <script>
-// Composition API
-import { onUnmounted, ref } from 'vue'
+  // Composition API
+  import { onUnmounted, ref } from "vue";
 
-export default {
-  setup() {
-    const media = window.matchMedia('(prefers-color-scheme: dark)')
-    const dark = ref(media.matches)
+  export default {
+    setup() {
+      const media = window.matchMedia("(prefers-color-scheme: dark)");
+      const dark = ref(media.matches);
 
-    const update = () => dark.value = media.matches
-    
-    media.addEventListener('change', update)
+      const update = () => (dark.value = media.matches);
 
-    onUnmounted(() => {
-      media.removeEventListener('change', update)
-    })
+      media.addEventListener("change", update);
 
-    return {
-      dark,
-      toggleDark() {
-        dark.value = !dark.value
-      }
-    }
-  }
-}
+      onUnmounted(() => {
+        media.removeEventListener("change", update);
+      });
+
+      return {
+        dark,
+        toggleDark() {
+          dark.value = !dark.value;
+        },
+      };
+    },
+  };
 </script>
 ```
 
@@ -259,46 +266,42 @@ Vuex 的话要做到这些就会变得更加复杂，你需要去定义 Mutation
 
 ```ts
 export function useDark() {
-  const system = usePreferDark()
-  const setting = useLocalStorage('setting-dark', 'auto')
+  const system = usePreferDark();
+  const setting = useLocalStorage("setting-dark", "auto");
 
   const dark = computed({
     get() {
-      return setting.value === 'auto'
-        ? system.value
-        : setting.value === 'dark'
+      return setting.value === "auto" ? system.value : setting.value === "dark";
     },
     set(v) {
-      if (v === system.value)
-        setting.value = 'auto'
-      else
-        setting.value = v ? 'dark' : 'light'
+      if (v === system.value) setting.value = "auto";
+      else setting.value = v ? "dark" : "light";
     },
-  })
+  });
 
-  return dark
+  return dark;
 }
 
 export function usePreferDark() {
-  const media = window.matchMedia('(prefers-color-scheme: dark)')
-  const dark = ref(media.matches)
+  const media = window.matchMedia("(prefers-color-scheme: dark)");
+  const dark = ref(media.matches);
 
-  const update = () => dark.value = media.matches
+  const update = () => (dark.value = media.matches);
 
-  media.addEventListener('change', update)
+  media.addEventListener("change", update);
   onUnmounted(() => {
-    media.removeEventListener('change', update)
-  })
+    media.removeEventListener("change", update);
+  });
 
-  return dark
+  return dark;
 }
 
 export function useLocalStorage(key, defaultValue) {
-  const data = ref(localStorage.getItem(key) ?? defaultValue)
+  const data = ref(localStorage.getItem(key) ?? defaultValue);
 
-  watch(data, () => localStorage.setItem(key, data.value))
+  watch(data, () => localStorage.setItem(key, data.value));
 
-  return data
+  return data;
 }
 ```
 
@@ -321,11 +324,11 @@ export function useLocalStorage(key, defaultValue) {
 然后在 `vue-composable` 里面提供了一个非常有趣的 API 叫做 `useDevtoolsInspector`，你可以传一些响应式的数据，当这些数据更新的时候去打点在 Timeline。你就可以更好的知道你的这些响应式的数据什么时候被什么时候被更新了以及更新成了什么。
 
 ```ts
-import { useDevtoolsInspector } from 'vue-composable'
+import { useDevtoolsInspector } from "vue-composable";
 
-const counter = ref(0)
+const counter = ref(0);
 
-useDevtoolsInspector({ counter })
+useDevtoolsInspector({ counter });
 ```
 
 然后再来一个就是 SFC 的单文件组件的一些更新。我们给 `script` 标签加了一个 `setup` 的 flag。那么通过 `<script setup>`，我就可以把原本的这个 `defineComponent` 的形式的变成了 ES Module 的形式。本来可能本来会需要说我们再说说我们在声明了很多的 `ref` 之后，我们需要在最后把他们的名字全部都记下来最后一起返回出去。这时候，如果我们这个中间的逻辑非常的长的时候，就会很容易忘记某一些东西而没有暴露在组件的实例上，他们就没有办法在模板上使用。
@@ -342,7 +345,7 @@ useDevtoolsInspector({ counter })
 
 如果需要进行一些单元测试的话，大家可以去看看 @pikax 的这个关于 [单元测试同时兼容两个版本的文章](https://dev.to/pikax/how-to-test-your-library-for-vue-2-and-vue-next-42ao)。
 
-### Vue Reactivity 
+### Vue Reactivity
 
 我们聊一聊 `@vue/reactivity` 这个灵活的响应式的系统。这个包有一个非常大的卖点就是它是和 UI 或者说这个响应式系统是和 Vue 的组件模型结构的。那么这是尤大前段时间发的一篇推，它主要讲了就是说我们的响应式系统可以在不同的环境也在不同的框架上复用。也就是说你可以自己根据这个 Reactivity 写一套自己的框架，或者甚至你可以把它拿来用在 Node.js 或者是用在别的地方。
 
@@ -386,64 +389,56 @@ ReactDOM.render(<MyCounter value={10}>, el)
 [`@vue-reactivity`](https://github.com/vue-reactivity) 是一个我对于 `@vue/reactivity` 一些可能性的探索。我希望它会个一系列的工具包。我们现在有的两个已经发布了的工具。其中一个是 [`@vue-reactivity/watch`](https://github.com/vue-reactivity/watch)，在 Vue 中 `watch` 是实现在 `@vue/runtime-core` 里的，因为 `watch` 和 Vue 的组件模型有一些生命周期上的强绑定。那么我们在这里把 Vue 的 `watch` 提取出来做了一些简化之后，你就可以直接在 `@vue/reactivity` 使用 `watch`。
 
 ```ts
-import { computed, reactive, ref } from '@vue/reactivity'
-import { watch, watchEffect } from '@vue-reactivity/watch'
+import { watch, watchEffect } from "@vue-reactivity/watch";
+import { computed, reactive, ref } from "@vue/reactivity";
 
-const count = ref(1)
+const count = ref(1);
 
-const stopWatch = watch(
-  count,
-  (newValue) => {
-    console.log(`Count: ${newValue}`)
-  }
-)
+const stopWatch = watch(count, (newValue) => {
+  console.log(`Count: ${newValue}`);
+});
 
-count.value += 1
+count.value += 1;
 // Count: 2
 
-stopWatch()
+stopWatch();
 ```
 
 另外一个是 [`@vue-reactivity/scope`](https://github.com/vue-reactivity/scope)，作用是做 `effect` 的自动收集。我们可以使用 `effectScope`，在这个里面声明的所有的 `effect` 都会被自动收集，我们就可以直接通过一个 `stop()` 函数去清除掉所有的这些 `effects`。这其实类似于类似于组件的 `setup()` 函数，是它的内部实现没有暴露出来，所以我们实现了这样的一个功能。关于这个我提了一个 RFC，希望我们可以把这个功能加入到 `@vue/reactivity` 本身上，然后可以提供给更多的库去做使用。
 
 ```ts
-import {
-  computed,
-  effectScope,
-  ref,
-  watch,
-} from '@vue-reactivity/scope'
+import { computed, effectScope, ref, watch } from "@vue-reactivity/scope";
 
-const counter = ref(0)
+const counter = ref(0);
 
 const stop = effectScope(() => {
-  const doubled = computed(() => counter.value * 2)
+  const doubled = computed(() => counter.value * 2);
 
-  watch(doubled, () => console.log(double.value))
+  watch(doubled, () => console.log(double.value));
 
-  watchEffect(() => console.log('Count: ', double.value))
-})
+  watchEffect(() => console.log("Count: ", double.value));
+});
 
 // to dispose all effects
-stop()
+stop();
 ```
 
 然后再来一些实验性的想法，一个是 `/lifecycle`，希望可以有一个生命周期钩子的实现可以去复用，更容易让我们在 Vue 响应式的基础上做出自己的框架。另外一个有趣的就是这个 filesystem, 一个响应式的文件系统。这边有一个简单的例子，我们可以从 `@vue-reactivity/fs` 里面去引入一个叫做 `useJSON` 的一个钩子, 我们给他传一个 `data.json` 作为文件路径。它会去读取这个文件后解析成 JSON 对象暴露在 `data` 上，我们可以监听`data` 就可以知道数据的改变，那么同时也可以通过这样的API，去修改 `data` 的值，然后可以把数据写回对应的 JSON 文件。
 
 ```ts
-import { effect } from '@vue/reactivity'
-import { useJSON } from '@vue-reactivity/fs'
+import { useJSON } from "@vue-reactivity/fs";
+import { effect } from "@vue/reactivity";
 
-const data = useJSON('data.json')
+const data = useJSON("data.json");
 
 // log on file changes
 effect(() => {
-  console.log(data.value)
-})
+  console.log(data.value);
+});
 
 // write back to file
-data.value = { foo: 'bar' }
-data.value.hello = 'world'
+data.value = { foo: "bar" };
+data.value.hello = "world";
 ```
 
 这些就是我现在正在做的一些探索，我觉得 Vue 的响应式系统非常的有趣，也相信未来还会有更多的的可能性和应用场景，希望可以和大家一起进行进一步的探索，找到一些有趣的使用方式和最佳实践。

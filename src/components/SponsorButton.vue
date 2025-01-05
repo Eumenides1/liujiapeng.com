@@ -8,7 +8,9 @@
       <div
         i-carbon-favorite
         group-hover="i-carbon-favorite-filled?mask text-rose"
-        transition-all duration-200 ease-out
+        transition-all
+        duration-200
+        ease-out
       />
       Sponsor to support my work
     </a>
@@ -20,7 +22,9 @@
       <div
         i-carbon-flash
         group-hover="i-carbon-flash-filled?mask text-yellow"
-        transition-all duration-200 ease-out
+        transition-all
+        duration-200
+        ease-out
       />
       在爱发电上支持我
     </a>

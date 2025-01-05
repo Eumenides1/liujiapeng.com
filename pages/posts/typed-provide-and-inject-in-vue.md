@@ -13,45 +13,43 @@ For example:
 
 ```ts
 // context.ts
-import type { InjectionKey } from 'vue'
+import type { InjectionKey } from "vue";
 
 export interface UserInfo {
-  id: number
-  name: string
+  id: number;
+  name: string;
 }
 
-export const InjectKeyUser: InjectionKey<UserInfo> = Symbol()
+export const InjectKeyUser: InjectionKey<UserInfo> = Symbol();
 ```
 
 ```ts
 // parent.vue
-import { provide } from 'vue'
-import { InjectKeyUser } from './context'
+import { provide } from "vue";
+import { InjectKeyUser } from "./context";
 
 export default {
   setup() {
     provide(InjectKeyUser, {
-      id: '117', // type error: should be number
-      name: 'Anthony',
-    })
+      id: "117", // type error: should be number
+      name: "Anthony",
+    });
   },
-}
+};
 ```
 
 ```ts
 // child.vue
-import { inject } from 'vue'
-import { InjectKeyUser } from './context'
+import { inject } from "vue";
+import { InjectKeyUser } from "./context";
 
 export default {
   setup() {
-    const user = inject(InjectKeyUser) // UserInfo | undefined
+    const user = inject(InjectKeyUser); // UserInfo | undefined
 
-    if (user)
-      console.log(user.name) // Anthony
-
+    if (user) console.log(user.name); // Anthony
   },
-}
+};
 ```
 
 See [the docs](https://v3.vuejs.org/api/composition-api.html#provide-inject) for more details.

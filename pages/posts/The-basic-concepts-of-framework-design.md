@@ -15,7 +15,7 @@ plum: true
 
 ---
 
-## ****02：编程范式之命令式编程****
+## \***\*02：编程范式之命令式编程\*\***
 
 针对于目前的前端开发而言，主要存在两种 **编程范式**：
 
@@ -26,18 +26,17 @@ plum: true
 
 ---
 
-### ****命令式****
+### \***\*命令式\*\***
 
 **详细描述做事过程**的方式就可以被叫做 **命令式**
 
 > 在指定的 div 中展示 “hello world”
-> 
 
 ```jsx
 // 1. 获取到指定的 div
-const divEle = document.querySelector('#app')
+const divEle = document.querySelector("#app");
 // 2. 为该 div 设置 innerHTML 为 hello world
-divEle.innerHTML = 'hello world'
+divEle.innerHTML = "hello world";
 ```
 
 该代码虽然只有两步，但是它清楚的描述了：**完成这件事情，所需要经历的过程**
@@ -45,26 +44,25 @@ divEle.innerHTML = 'hello world'
 那么假如我们所做的事情，变得更加复杂了，则整个过程也会变得更加复杂。
 
 > 为指定的 div 的子元素 div 的子元素 p 标签，展示变量 msg
-> 
 
 ```jsx
 // 1. 获取到第一层的 div
-const divEle = document.querySelector('#app')
+const divEle = document.querySelector("#app");
 // 2. 获取到它的子 div
-const subDivEle = divEle.querySelector('div')
+const subDivEle = divEle.querySelector("div");
 // 3. 获取第三层的 p
-const subPEle = subDivEle.querySelector('p')
+const subPEle = subDivEle.querySelector("p");
 // 4. 定义变量 msg
-const msg = 'hello world'
+const msg = "hello world";
 // 5. 为该 p 元素设置 innerHTML 为 hello world
-subPEle.innerHTML = msg
+subPEle.innerHTML = msg;
 ```
 
 命令式是：**关注过程**的一种编程范式，他描述了完成一个功能的 **详细逻辑与步骤**。
 
 ---
 
-## ****03：编程范式之声明式编程****
+## \***\*03：编程范式之声明式编程\*\***
 
 一个典型的 **声明式:**
 
@@ -77,7 +75,6 @@ subPEle.innerHTML = msg
 所以说，所谓声明式指的是：**不关注过程，只关注结果**的范式。
 
 > 为指定的 div 的子元素 div 的子元素 p 标签，展示变量 msg
-> 
 
 ```jsx
 <div id="app">
@@ -92,7 +89,7 @@ subPEle.innerHTML = msg
 
 声明式是：**关注结果**的一种编程范式，他 **并不关心**完成一个功能的 **详细逻辑与步骤**。（注意：这并不意味着声明式不需要过程！声明式只是把过程进行了隐藏而已！）
 
-## ****04：命令式 VS 声明式****
+## \***\*04：命令式 VS 声明式\*\***
 
 评价一种编程范式好还是不好的标准是什么？
 
@@ -105,19 +102,18 @@ subPEle.innerHTML = msg
 
 ---
 
-### ****性能****
+### \***\*性能\*\***
 
 性能一直是我们在进行项目开发时特别关注的方向，那么我们通常如何来表述一个功能的性能好坏呢？
 
 我们来看一个例子：
 
 > 为指定 div 设置文本为 “hello world”
-> 
 
 那么针对于这个需求而言，最简单的代码就是：
 
 ```jsx
-div.innerText = "hello world" // 耗时为：1
+div.innerText = "hello world"; // 耗时为：1
 ```
 
 你应该找不到比这个更简单的代码实现了。
@@ -138,7 +134,7 @@ div.innerText = "hello world" // 耗时为：1
 
 ---
 
-### ****可维护性****
+### \***\*可维护性\*\***
 
 可维护性代表的维度非常多，但是通常情况下，所谓的可维护性指的是：对代码可以方便的 **阅读、修改、删除、增加** 。
 
@@ -149,15 +145,15 @@ div.innerText = "hello world" // 耗时为：1
 ```jsx
 // 命令式
 // 1. 获取到第一层的 div
-const divEle = document.querySelector('#app')
+const divEle = document.querySelector("#app");
 // 2. 获取到它的子 div
-const subDivEle = divEle.querySelector('div')
+const subDivEle = divEle.querySelector("div");
 // 3. 获取第三层的 p
-const subPEle = subDivEle.querySelector('p')
+const subPEle = subDivEle.querySelector("p");
 // 4. 定义变量 msg
-const msg = 'hello world'
+const msg = "hello world";
 // 5. 为该 p 元素设置 innerHTML 为 hello world
-subPEle.innerHTML = msg
+subPEle.innerHTML = msg;
 ```
 
 ```jsx
@@ -171,11 +167,11 @@ subPEle.innerHTML = msg
 
 对于以上代码而言，**声明式** 的代码明显更加利于阅读，所以也更加利于维护。
 
-所以，由以上举例可知：**命令式的可维护性 < 声明式的可维护性** 
+所以，由以上举例可知：**命令式的可维护性 < 声明式的可维护性**
 
 ---
 
-## ****总结****
+## \***\*总结\*\***
 
 由以上分析可知两点内容：
 
@@ -184,7 +180,7 @@ subPEle.innerHTML = msg
 
 ---
 
-## 05：****企业应用的开发与设计原则****
+## 05：\***\*企业应用的开发与设计原则\*\***
 
 无论什么类型的企业，也无论它们在开发什么类型的项目，那么最关注的点无非就是两个：
 
@@ -193,7 +189,7 @@ subPEle.innerHTML = msg
 
 ---
 
-### ****项目成本****
+### \***\*项目成本\*\***
 
 决定项目成本的是**开发周期**
 
@@ -201,7 +197,7 @@ subPEle.innerHTML = msg
 
 所以这也是为什么 `Vue` 会变得越来越受欢迎的原因。
 
-### ****开发体验****
+### \***\*开发体验\*\***
 
 决定开发者开发体验的核心要素，主要是在开发时和阅读时的难度，这个被叫做：**心智负担**。
 
@@ -213,19 +209,17 @@ subPEle.innerHTML = msg
 
 ---
 
-## ****06：为什么说框架的设计过程其实是一个不断取舍的过程？****
+## \***\*06：为什么说框架的设计过程其实是一个不断取舍的过程？\*\***
 
 `Vue`作者尤雨溪在一次演讲中说道：**框架的设计过程其实是一个不断取舍的过程**。
 
 > 命令式的性能 > 声明式的性能
-> 
-> 
+>
 > 命令式的可维护性 < 声明式的可维护性
-> 
+>
 > 声明式的框架本质上是由命令式的代码来去实现的
-> 
+>
 > 企业项目开发时，大多使用声明式框架
-> 
 
 接下来来思考一个问题：**框架的开发与设计原则是什么呢？**
 
@@ -240,7 +234,6 @@ subPEle.innerHTML = msg
 依然以这个例子为例：
 
 > 为指定的 div 的子元素 div 的子元素 p 标签，展示变量 msg
-> 
 
 对于开发者而言，不需要关注实现过程，只需要关注最终的结果即可。
 
@@ -253,7 +246,5 @@ subPEle.innerHTML = msg
 答案也就呼之欲出了，因为：
 
 > 我们需要在可维护性和性能之间，找到一个平衡点。在保证可维护性的基础上，尽可能的减少性能的损耗。
-> 
-> 
-> 所以框架的设计过程其实是一个不断在 **可维护性和性能** 之间进行取舍的过程
 >
+> 所以框架的设计过程其实是一个不断在 **可维护性和性能** 之间进行取舍的过程

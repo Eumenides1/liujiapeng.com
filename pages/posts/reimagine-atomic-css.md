@@ -67,10 +67,16 @@ The traditional way of making Atomic CSS is to provide all the CSS utilities you
 It will be compiled to:
 
 ```css
-.m-1 { margin: 0.25 rem; }
-.m-2 { margin: 0.5 rem; }
+.m-1 {
+  margin: 0.25 rem;
+}
+.m-2 {
+  margin: 0.5 rem;
+}
 /* ... */
-.m-10 { margin: 2.5 rem; }
+.m-10 {
+  margin: 2.5 rem;
+}
 ```
 
 Great, now you can use `class="m-1"` to set the margin. But as you might see, with this approach, you can't set the margin outside of 1 to 10, and also, you need to pay the cost of shipping 10 CSS rules even if you have only used one. Later if you want to support different margin directions like `mt` for `margin-top`, `mb` for `margin-bottom`. With those 4 directions, you are multiplying your CSS size by 5. Then when it comes to variants like `hover:` and `focus:` - you know the story. At that point, adding one more utility often means you are going to introduce a few extra kilobytes. Thus, this is also why the traditional Tailwind ships megabytes of CSS.
@@ -94,37 +100,37 @@ By flipping the order of "generating" and "usage scanning", the "on-demand" appr
 To achieve this, both Windi CSS and Tailwind JIT take the approach of pre-scanning your source code. Here is a simple example of that:
 
 ```ts
-import { promises as fs } from 'fs'
-import glob from 'fast-glob'
+import { promises as fs } from "node:fs";
+import glob from "fast-glob";
 
 // this usually comes from user config
-const include = ['src/**/*.{jsx,tsx,vue,html}']
+const include = ["src/**/*.{jsx,tsx,vue,html}"];
 
 async function scan() {
-  const files = await glob(include)
+  const files = await glob(include);
 
   for (const file of files) {
-    const content = await fs.readFile(file, 'utf8')
+    const content = await fs.readFile(file, "utf8");
     // pass the content to the generator and match for class usages
   }
 }
 
-await scan()
+await scan();
 // scanning is done before the build / dev process
-await buildOrStartDevServer()
+await buildOrStartDevServer();
 ```
 
 To provide HMR during development, a [file watcher](https://github.com/paulmillr/chokidar) is usually needed:
 
 ```ts
-import chokidar from 'chokidar'
+import chokidar from "chokidar";
 
-chokidar.watch(include).on('change', (event, path) => {
+chokidar.watch(include).on("change", (event, path) => {
   // read the file again
-  const content = await fs.readFile(file, 'utf8')
+  const content = await fs.readFile(file, "utf8");
   // pass the content to the generator again
   // invalidate the css module and send HMR event
-})
+});
 ```
 
 As a result, with the on-demand approach, Windi CSS is able to provide about [100x faster performance](https://twitter.com/antfu7/status/1361398324587163648) than the traditional Tailwind CSS.
@@ -154,17 +160,17 @@ If you know Tailwind a bit more, you might know it can be configured. So you spe
 module.exports = {
   theme: {
     borderWidth: {
-      DEFAULT: '1px',
-      0: '0',
-      2: '2px',
-      3: '3px',
-      4: '4px',
-      6: '6px',
-      8: '8px',
-      10: '10px' // <-- here
-    }
-  }
-}
+      DEFAULT: "1px",
+      0: "0",
+      2: "2px",
+      3: "3px",
+      4: "4px",
+      6: "6px",
+      8: "8px",
+      10: "10px", // <-- here
+    },
+  },
+};
 ```
 
 Ah, fair enough, now we could list them all and get back to work... wait, where was I? The original task you are working on gets lost, and it takes time to get back to the context again. Later on, if we want to set border colors, we'd need to look up the docs again to see how it could be configured and so on. Maybe someone would enjoy this workflow, but it's not for me. I don't enjoy being interrupted by something that should intuitively work.
@@ -173,31 +179,31 @@ Windi CSS is more relaxed to the rules and will try to provide the corresponding
 
 ```ts
 // tailwind.config.js
-const _ = require('lodash')
-const plugin = require('tailwindcss/plugin')
+const _ = require("lodash");
+const plugin = require("tailwindcss/plugin");
 
 module.exports = {
   theme: {
     rotate: {
-      '1/4': '90deg',
-      '1/2': '180deg',
-      '3/4': '270deg',
-    }
+      "1/4": "90deg",
+      "1/2": "180deg",
+      "3/4": "270deg",
+    },
   },
   plugins: [
     plugin(({ addUtilities, theme, e }) => {
-      const rotateUtilities = _.map(theme('rotate'), (value, key) => {
+      const rotateUtilities = _.map(theme("rotate"), (value, key) => {
         return {
           [`.${e(`rotate-${key}`)}`]: {
-            transform: `rotate(${value})`
-          }
-        }
-      })
+            transform: `rotate(${value})`,
+          },
+        };
+      });
 
-      addUtilities(rotateUtilities)
-    })
-  ]
-}
+      addUtilities(rotateUtilities);
+    }),
+  ],
+};
 ```
 
 That alone is to generate these:
@@ -231,15 +237,15 @@ UnoCSS is an **engine** instead of a **framework** because there are **no core u
 We are imagining UnoCSS being able to simulate the functionalities of most of the existing atomic CSS frameworks. And possibly have been used as the engine to create some new atomic CSS frameworks! For example:
 
 ```ts
-import UnocssPlugin from '@unocss/vite'
+import PresetAntfu from "@antfu/oh-my-cool-unocss-preset";
 
+import PresetBootstrap from "@unocss/preset-bootstrap";
 // the following presets do not exist at this moment,
 // contribution welcome!
-import PresetTachyons from '@unocss/preset-tachyons'
-import PresetBootstrap from '@unocss/preset-bootstrap'
-import PresetTailwind from '@unocss/preset-tailwind'
-import PresetWindi from '@unocss/preset-windi'
-import PresetAntfu from '@antfu/oh-my-cool-unocss-preset'
+import PresetTachyons from "@unocss/preset-tachyons";
+import PresetTailwind from "@unocss/preset-tailwind";
+import PresetWindi from "@unocss/preset-windi";
+import UnocssPlugin from "@unocss/vite";
 
 export default {
   plugins: [
@@ -252,10 +258,10 @@ export default {
         // PresetAntfu
 
         // pick one... or multiple!
-      ]
-    })
-  ]
-}
+      ],
+    }),
+  ],
+};
 ```
 
 Let's take a look at how it made them possible:
@@ -271,15 +277,15 @@ Here is a quick guide through:
 Atomic CSS might come huge in terms of the amount. It's important to have the rules definition straightforward and easy to read. To create a custom rule for UnoCSS, you can write it as follows:
 
 ```ts
-rules: [
-  ['m-1', { margin: '0.25rem' }]
-]
+rules: [["m-1", { margin: "0.25rem" }]];
 ```
 
 Whenever `m-1` is detected in users' codebase, the following CSS will be generated:
 
 ```css
-.m-1 { margin: 0.25rem; }
+.m-1 {
+  margin: 0.25rem;
+}
 ```
 
 ###### Dynamic Rules
@@ -289,8 +295,8 @@ To make it dynamic, change the matcher to a RegExp and the body to a function:
 ```ts
 rules: [
   [/^m-(\d+)$/, ([, d]) => ({ margin: `${d / 4}rem` })],
-  [/^p-(\d+)$/, match => ({ padding: `${match[1] / 4}rem` })],
-]
+  [/^p-(\d+)$/, (match) => ({ padding: `${match[1] / 4}rem` })],
+];
 ```
 
 The first argument of the body function is the match result, so you can destructure it to get the RegExp matched groups.
@@ -309,9 +315,15 @@ For example, with the usage:
 the corresponding CSS will be generated:
 
 ```css
-.m-100 { margin: 25rem; }
-.m-3 { margin: 0.75rem; }
-.p-5 { padding: 1.25rem; }
+.m-100 {
+  margin: 25rem;
+}
+.m-3 {
+  margin: 0.75rem;
+}
+.p-5 {
+  padding: 1.25rem;
+}
 ```
 
 That's it. You only need to add more utilities using the same pattern, and now you got your own atomic CSS running!
@@ -352,10 +364,18 @@ One thing worth mentioning is the default [`@unocss/preset-uno`](https://github.
 For example, both `ml-3` (Tailwind), `ms-2` (Bootstrap), `ma4` (Tachyons), `mt-10px` (Windi CSS) are valid.
 
 ```css
-.ma4 { margin: 1rem; }
-.ml-3 { margin-left: 0.75rem; }
-.ms-2 { margin-inline-start: 0.5rem; }
-.mt-10px { margin-top: 10px; }
+.ma4 {
+  margin: 1rem;
+}
+.ml-3 {
+  margin-left: 0.75rem;
+}
+.ms-2 {
+  margin-inline-start: 0.5rem;
+}
+.mt-10px {
+  margin-top: 10px;
+}
 ```
 
 [Learn more about the default preset](https://github.com/antfu/unocss/tree/main/packages/preset-uno).
@@ -373,7 +393,9 @@ Let's unleash the true power of UnoCSS:
 It turns your Tailwind code from this:
 
 ```html
-<button class="bg-blue-400 hover:bg-blue-500 text-sm text-white font-mono font-light py-2 px-4 rounded border-2 border-blue-200 dark:bg-blue-500 dark:hover:bg-blue-600">
+<button
+  class="bg-blue-400 hover:bg-blue-500 text-sm text-white font-mono font-light py-2 px-4 rounded border-2 border-blue-200 dark:bg-blue-500 dark:hover:bg-blue-600"
+>
   Button
 </button>
 ```
@@ -381,7 +403,7 @@ It turns your Tailwind code from this:
 to:
 
 ```html
-<button 
+<button
   bg="blue-400 hover:blue-500 dark:blue-500 dark:hover:blue-600"
   text="sm white"
   font="mono light"
@@ -424,7 +446,9 @@ If you've ever read my previous post [Journey with Icons Continues](/posts/journ
 <!-- Sun in light mode, Moon in dark mode, from Carbon -->
 <button class="i-carbon-sun dark:i-carbon-moon" />
 <!-- Twemoji of laugh, turns to tear on hovering -->
-<div class="i-twemoji-grinning-face-with-smiling-eyes hover:i-twemoji-face-with-tears-of-joy" />
+<div
+  class="i-twemoji-grinning-face-with-smiling-eyes hover:i-twemoji-face-with-tears-of-joy"
+/>
 ```
 
 <div flex gap-2 text-4xl p-2 mt4>
@@ -437,7 +461,7 @@ If you've ever read my previous post [Journey with Icons Continues](/posts/journ
   <!-- Sun in light mode, Moon in dark mode, from Carbon -->
   <button class="i-carbon-sun dark:i-carbon-moon" @click="toggleDark()"/>
   <!-- Twemoji of laugh, turns to tear on hovering -->
-  <div class="i-twemoji-grinning-face-with-smiling-eyes hover:i-twemoji-face-with-tears-of-joy" /> 
+  <div class="i-twemoji-grinning-face-with-smiling-eyes hover:i-twemoji-face-with-tears-of-joy" />
   <div text-base my-auto flex><div i-carbon-arrow-left my-auto mr-1 /> Hover it</div>
 </div>
 
@@ -515,30 +539,27 @@ In Vite, the `transform` hook will be iterated over with all the files with thei
 export default {
   plugins: [
     {
-      name: 'unocss',
+      name: "unocss",
       transform(code, id) {
         // filter out the files you don't want to scan
-        if (!filter(id))
-          return
+        if (!filter(id)) return;
 
         // scan the code (also handles invalidate on dev)
-        scan(code, id)
+        scan(code, id);
 
         // we just want the content, so we don't transform the code
-        return null
+        return null;
       },
       resolveId(id) {
-        return id === VIRTUAL_CSS_ID ? id : null
+        return id === VIRTUAL_CSS_ID ? id : null;
       },
       async load(id) {
         // generated css is provide as a virtual module
-        if (id === VIRTUAL_CSS_ID)
-          return { code: await generate() }
-
-      }
-    }
-  ]
-}
+        if (id === VIRTUAL_CSS_ID) return { code: await generate() };
+      },
+    },
+  ],
+};
 ```
 
 Given Vite also handles the HMR and will involve the `transform` hook again of upon file changes, this allows UnoCSS to finish everything in a single pass with no duplication of file IO and fs watcher. In addition to that, with this approach, the scanning relies on the module graph instead of file globing. Meaning that only the modules that been bundled into your app will affect the generated CSS instead of any files under your folders.

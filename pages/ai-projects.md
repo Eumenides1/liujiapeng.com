@@ -6,58 +6,58 @@ description: List of Tools for AI
 plum: true
 projects:
   Ai 工具集:
-    - name: 'Codeium 代码辅助'
-      link: 'https://codeium.com/'
-      desc: 'GitHub Copilot 的免费替代品，使用体验很不错，支持多行代码补全，支持自然语言识别，个人使用永久免费'
-      icon: 'i-clarity:terminal-solid'
-    - name: 'Notion AI 智能笔记'
-      link: 'https://notion.so/product/ai'
-      desc: 'Notion 笔记、知识库和任务管理整合在一起的智能协作应用'
-      icon: 'i-simple-icons:notion'
-    - name: 'Post Genius 文章生成器'
-      link: 'https://www.postgeniusapp.com'
-      desc: '使用ChatGPT的文章生成工具'
-      icon: 'i-material-symbols:document-scanner-rounded'
-    - name: 'Content Gorilla AI 视频转博客'
-      link: 'https://getcgai.com/commercial'
-      desc: '自动识别视频中的主题和关键词-转化为博客'
-      icon: 'i-mdi:robot'
-    - name: 'Flair AI 营销图生成'
-      link: 'https://flair.ai'
-      desc: '非常好用的营销图片生成工具'
-      icon: 'i-twemoji:framed-picture'
-    - name: 'MidJourney 图像生成'
-      link: 'https://www.midjourney.com/'
-      desc: '强大的AI图像生成工具'
-      icon: 'i-svg-spinners:bars-scale-middle'
-    - name: 'Stable Diffusion 图像生成'
-      link: 'https://beta.dreamstudio.ai/i'
-      desc: 'Stable Diffusion AI图像生成工具'
-      icon: 'i-ic:sharp-monochrome-photos'
-    - name: 'Lumen5'
-      link: 'https://lumen5.com/'
-      desc: 'Lumen5是一款基于AI的在线视频制作工具'
-      icon: 'i-icon-park-outline:videocamera-one'
-    - name: 'Booth 产品营销图生成'
-      link: 'http://booth.ai'
-      desc: '产品放在不同布景生成营销用图'
-      icon: 'i-arcticons:company-portal'
-    - name: 'Gamma 一句话生成PPT'
-      link: 'https://gamma.app/'
-      desc: '一句话生成PPT'
-      icon: 'i-ri:file-ppt-2-fill'
-    - name: '会议纪要总结工具'
-      link: 'http://tldv.io'
-      desc: '会议纪要总结工具'
-      icon: 'i-healthicons:group-discussion-meeting'
-    - name: 'AI 购物 比价'
-      link: 'https://getscore.app'
-      desc: '创意参考，全网帮你寻找更便宜的价格'
-      icon: 'i-emojione:shopping-cart'
-    - name: 'Civitai 模型下载站'
-      link: 'https://civitai.com'
-      desc: '在公司不要开，有分级'
-      icon: 'i-gg:girl'
+    - name: "Codeium 代码辅助"
+      link: "https://codeium.com/"
+      desc: "GitHub Copilot 的免费替代品，使用体验很不错，支持多行代码补全，支持自然语言识别，个人使用永久免费"
+      icon: "i-clarity:terminal-solid"
+    - name: "Notion AI 智能笔记"
+      link: "https://notion.so/product/ai"
+      desc: "Notion 笔记、知识库和任务管理整合在一起的智能协作应用"
+      icon: "i-simple-icons:notion"
+    - name: "Post Genius 文章生成器"
+      link: "https://www.postgeniusapp.com"
+      desc: "使用ChatGPT的文章生成工具"
+      icon: "i-material-symbols:document-scanner-rounded"
+    - name: "Content Gorilla AI 视频转博客"
+      link: "https://getcgai.com/commercial"
+      desc: "自动识别视频中的主题和关键词-转化为博客"
+      icon: "i-mdi:robot"
+    - name: "Flair AI 营销图生成"
+      link: "https://flair.ai"
+      desc: "非常好用的营销图片生成工具"
+      icon: "i-twemoji:framed-picture"
+    - name: "MidJourney 图像生成"
+      link: "https://www.midjourney.com/"
+      desc: "强大的AI图像生成工具"
+      icon: "i-svg-spinners:bars-scale-middle"
+    - name: "Stable Diffusion 图像生成"
+      link: "https://beta.dreamstudio.ai/i"
+      desc: "Stable Diffusion AI图像生成工具"
+      icon: "i-ic:sharp-monochrome-photos"
+    - name: "Lumen5"
+      link: "https://lumen5.com/"
+      desc: "Lumen5是一款基于AI的在线视频制作工具"
+      icon: "i-icon-park-outline:videocamera-one"
+    - name: "Booth 产品营销图生成"
+      link: "http://booth.ai"
+      desc: "产品放在不同布景生成营销用图"
+      icon: "i-arcticons:company-portal"
+    - name: "Gamma 一句话生成PPT"
+      link: "https://gamma.app/"
+      desc: "一句话生成PPT"
+      icon: "i-ri:file-ppt-2-fill"
+    - name: "会议纪要总结工具"
+      link: "http://tldv.io"
+      desc: "会议纪要总结工具"
+      icon: "i-healthicons:group-discussion-meeting"
+    - name: "AI 购物 比价"
+      link: "https://getscore.app"
+      desc: "创意参考，全网帮你寻找更便宜的价格"
+      icon: "i-emojione:shopping-cart"
+    - name: "Civitai 模型下载站"
+      link: "https://civitai.com"
+      desc: "在公司不要开，有分级"
+      icon: "i-gg:girl"
 ---
 
 <ListAiProjects :projects="frontmatter.projects" />

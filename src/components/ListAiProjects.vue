@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps<{ projects: Record<string, any[]> }>()
+defineProps<{ projects: Record<string, any[]> }>();
 </script>
 
 <template>
@@ -9,16 +9,21 @@ defineProps<{ projects: Record<string, any[]> }>()
     </h4>
     <div class="project-grid py-2 -mx-3 gap-2">
       <a
-        v-for="item, idx in projects[key]"
+        v-for="(item, idx) in projects[key]"
         :key="idx"
         class="item relative flex items-center"
         :href="item.link"
         target="_blank"
-        :class="!item.link ? 'opacity-0 pointer-events-none h-0 -mt-8 -mb-4' : ''"
+        :class="
+          !item.link ? 'opacity-0 pointer-events-none h-0 -mt-8 -mb-4' : ''
+        "
         :title="item.name"
       >
         <div v-if="item.icon" class="pt-2 pr-5">
-          <div class="text-3xl opacity-50" :class="item.icon || 'i-carbon-unknown'" />
+          <div
+            class="text-3xl opacity-50"
+            :class="item.icon || 'i-carbon-unknown'"
+          />
         </div>
         <div class="flex-auto">
           <div class="text-normal">{{ item.name }}</div>
@@ -29,9 +34,7 @@ defineProps<{ projects: Record<string, any[]> }>()
   </template>
   <div class="markdown pb5">
     <p op75>
-      <em>
-        Thanks for getting intersted in my works!
-      </em>
+      <em> Thanks for getting intersted in my works! </em>
     </p>
   </div>
 </template>

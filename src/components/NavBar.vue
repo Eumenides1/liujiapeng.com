@@ -2,11 +2,11 @@
 function toTop() {
   window.scrollTo({
     top: 0,
-    behavior: 'smooth',
-  })
+    behavior: "smooth",
+  });
 }
 
-const { y: scroll } = useWindowScroll()
+const { y: scroll } = useWindowScroll();
 </script>
 
 <template>
@@ -20,8 +20,18 @@ const { y: scroll } = useWindowScroll()
     </RouterLink>
     <button
       title="Scroll to top"
-      fixed right-3 bottom-3 w-10 h-10 hover:op100 rounded-full
-      hover-bg-hex-8883 transition duration-300 z-100 print:hidden
+      fixed
+      right-3
+      bottom-3
+      w-10
+      h-10
+      hover:op100
+      rounded-full
+      hover-bg-hex-8883
+      transition
+      duration-300
+      z-100
+      print:hidden
       :class="scroll > 300 ? 'op30' : 'op0! pointer-events-none'"
       @click="toTop()"
     >
@@ -38,8 +48,8 @@ const { y: scroll } = useWindowScroll()
           <span class="lt-md:hidden">Projects</span>
           <div i-ri-lightbulb-line class="md:hidden" />
         </RouterLink>
-        <RouterLink to="/references" title="Reference">
-          <span class="lt-md:hidden">Tools</span>
+        <RouterLink to="/algorithm" title="Algorithm">
+          <span class="lt-md:hidden">Algorithm</span>
           <div i-carbon:chemistry-reference class="md:hidden" />
         </RouterLink>
         <RouterLink to="/ai-projects" title="Demos">
@@ -50,14 +60,27 @@ const { y: scroll } = useWindowScroll()
           <span class="lt-md:hidden">Tweet</span>
           <div i-ri-screenshot-line class="md:hidden" />
         </RouterLink>
-        <a href="https://twitter.com/jaguarliu" target="_blank" title="Twitter" class="lt-md:hidden">
+        <a
+          href="https://twitter.com/jaguarliu"
+          target="_blank"
+          title="Twitter"
+          class="lt-md:hidden"
+        >
           <feather-twitter />
         </a>
-        <a href="https://github.com/Eumenides" target="_blank" title="GitHub" class="lt-md:hidden">
+        <a
+          href="https://github.com/Eumenides"
+          target="_blank"
+          title="GitHub"
+          class="lt-md:hidden"
+        >
           <div i-uil-github-alt />
         </a>
         <a href="/feed.xml" target="_blank" title="RSS" class="lt-md:hidden">
-          <div i-la-rss-square style="font-size:1.25rem; margin: 0 -0.125rem;" />
+          <div
+            i-la-rss-square
+            style="font-size: 1.25rem; margin: 0 -0.125rem"
+          />
         </a>
         <ToggleTheme />
       </div>

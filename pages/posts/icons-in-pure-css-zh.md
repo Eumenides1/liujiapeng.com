@@ -19,7 +19,7 @@ description: 纯 CSS 中的图标解决方案
 - 2020 年 8 月 - [图标探索之旅](/posts/journey-with-icons)
 - 2021 年 9 月 - [图标探索之旅后续](/posts/journey-with-icons-continues)
 - 2021 年 10 月 - [重新构想原子化 CSS](/posts/reimagine-atomic-css-zh)
-- 2021 年 11 月 - 聊聊纯 CSS 图标 - *你在这里！*
+- 2021 年 11 月 - 聊聊纯 CSS 图标 - _你在这里！_
 
 ## 现有方案
 
@@ -45,7 +45,7 @@ description: 纯 CSS 中的图标解决方案
 <div grid="~ cols-2">
 
 ```html
-<div class="my-icon"></div> 
+<div class="my-icon"></div>
 ```
 
 <div i-twemoji-grinning-face text-5xl my-auto mx-4 />
@@ -60,16 +60,16 @@ description: 纯 CSS 中的图标解决方案
 再次感谢 [Iconify](https://iconify.design/)，它将 100 多个图标集与上万个图标统一为 [一致的 JSON 格式](https://github.com/iconify/collections-json)。它允许我们通过简单地提供集合和图标 ID 的方式来获取任意图标集中的 SVG，使用方式如下：
 
 ```ts
-import { iconToSVG, getIconData } from '@iconify/utils'
+import { getIconData, iconToSVG } from "@iconify/utils";
 
-const svg = iconToSVG(getIconData('mdi', 'alarm'))
+const svg = iconToSVG(getIconData("mdi", "alarm"));
 // (此处并非真实 API，仅供示意)
 ```
 
 当我们得到 SVG 字符串后，可以将其转换为 DataURI：
 
 ```ts
-const dataUri = `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`
+const dataUri = `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
 ```
 
 说到 DataURI，使用 [Base64](https://developer.mozilla.org/en-US/docs/Glossary/Base64) 几乎一直是我的默认选择 -- 直到我看到 Chris Coyier 所写的 [你可能不需要使用 Base64 SVG](https://css-tricks.com/probably-dont-base64-svg/) 文章。对于图像等二进制数据必须使用 Base64 进行编码，以便在 CSS 等纯文本文件中使用，而对于 SVG 来说，由于它已经是文本格式，所以使用 Base64 编码实际上会使得文件体积变得变大。
@@ -79,17 +79,23 @@ const dataUri = `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')
 ```ts
 // https://bl.ocks.org/jennyknuth/222825e315d45a738ed9d6e04c7a88d0
 function encodeSvg(svg: string) {
-  return svg.replace('<svg', (~svg.indexOf('xmlns') ? '<svg' : '<svg xmlns="http://www.w3.org/2000/svg"'))
-    .replace(/"/g, '\'')
-    .replace(/%/g, '%25')
-    .replace(/#/g, '%23')
-    .replace(/{/g, '%7B')
-    .replace(/}/g, '%7D')
-    .replace(/</g, '%3C')
-    .replace(/>/g, '%3E')
+  return svg
+    .replace(
+      "<svg",
+      ~svg.indexOf("xmlns")
+        ? "<svg"
+        : '<svg xmlns="http://www.w3.org/2000/svg"',
+    )
+    .replace(/"/g, "'")
+    .replace(/%/g, "%25")
+    .replace(/#/g, "%23")
+    .replace(/\{/g, "%7B")
+    .replace(/\}/g, "%7D")
+    .replace(/</g, "%3C")
+    .replace(/>/g, "%3E");
 }
 
-const dataUri = `data:image/svg+xml;utf8,${encodeSvg(svg)}`
+const dataUri = `data:image/svg+xml;utf8,${encodeSvg(svg)}`;
 ```
 
 ### 可缩放
@@ -166,31 +172,29 @@ const dataUri = `data:image/svg+xml;utf8,${encodeSvg(svg)}`
 ```ts
 // 如果 SVG 的图标包含 `currentColor` 的值
 // 它大概率是一个单色图标
-const mode = svg.includes('currentColor')
-  ? 'mask'
-  : 'background-img'
+const mode = svg.includes("currentColor") ? "mask" : "background-img";
 
-const uri = `url("data:image/svg+xml;utf8,${encodeSvg(svg)}")`
+const uri = `url("data:image/svg+xml;utf8,${encodeSvg(svg)}")`;
 
 // 单色图标
-if (mode === 'mask') {
+if (mode === "mask") {
   return {
-    'mask': `${uri} no-repeat`,
-    'mask-size': '100% 100%',
-    'background-color': 'currentColor',
-    'height': '1em',
-    'width': '1em',
-  }
+    mask: `${uri} no-repeat`,
+    "mask-size": "100% 100%",
+    "background-color": "currentColor",
+    height: "1em",
+    width: "1em",
+  };
 }
 // 彩色图标
 else {
   return {
-    'background': `${uri} no-repeat`,
-    'background-size': '100% 100%',
-    'background-color': 'transparent',
-    'height': '1em',
-    'width': '1em',
-  }
+    background: `${uri} no-repeat`,
+    "background-size": "100% 100%",
+    "background-color": "transparent",
+    height: "1em",
+    width: "1em",
+  };
 }
 ```
 
@@ -223,9 +227,9 @@ npm i -D unocss @unocss/preset-icons @iconify/json
 接着配置你的 `vite.config.js`：
 
 ```ts
-import { defineConfig } from 'vite'
-import UnoCSS from 'unocss'
-import UnocssIcons from '@unocss/preset-icons'
+import UnocssIcons from "@unocss/preset-icons";
+import UnoCSS from "unocss";
+import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
@@ -235,16 +239,16 @@ export default defineConfig({
       presets: [
         UnocssIcons({
           // 其他选项
-          prefix: 'i-',
+          prefix: "i-",
           extraProperties: {
-            display: 'inline-block'
-          }
+            display: "inline-block",
+          },
         }),
         // presetUno() - 取消注释以启用默认的预设
       ],
     }),
   ],
-})
+});
 ```
 
 这就是今天的全部内容了。希望你能喜欢这个来自 UnoCSS 的图标解决方案，或者能为你提供灵感，用于你自己的项目。

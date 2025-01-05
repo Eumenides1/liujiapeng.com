@@ -1,0 +1,1 @@
+<GridAlgorithm only-date />

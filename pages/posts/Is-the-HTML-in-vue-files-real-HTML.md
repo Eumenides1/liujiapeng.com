@@ -33,7 +33,7 @@ plum: true
 
 ---
 
-## ****08：什么是运行时？****
+## \***\*08：什么是运行时？\*\***
 
 在 `Vue 3` 的 [源代码](https://github.com/vuejs/core) 中存在一个 [runtime-core](https://github.com/vuejs/core/tree/main/packages/runtime-core) 的文件夹，该文件夹内存放的就是 **运行时** 的核心代码逻辑。
 
@@ -71,7 +71,7 @@ plum: true
 
 ```jsx
 <template>
-	<div class="test">hello render</div>
+  <div class="test">hello render</div>
 </template>
 ```
 
@@ -80,10 +80,9 @@ plum: true
 ---
 
 > 假设有一天你们领导跟你说：
-> 
-> 
+>
 > 我希望根据如下数据：
-> 
+>
 > ```jsx
 > {
 > 	type: 'div',
@@ -93,13 +92,12 @@ plum: true
 > 	children: 'hello render'
 > }
 > ```
-> 
+>
 > 渲染出这样一个 div：
-> 
+>
 > ```jsx
 > <div class="test">hello render</div>
 > ```
-> 
 
 针对这样的一个需求，我们可以这样做
 
@@ -132,13 +130,11 @@ plum: true
 
 ---
 
-## ****09：什么是编译时？****
+## \***\*09：什么是编译时？\*\***
 
 > 但是你的领导用了一段时间你的 `render` 之后，却说：天天这样写也太麻烦了，每次都得写一个复杂的 `vnode`，能不能让我直接写 **HTML 标签结构的方式** 你来进行渲染呢？
-> 
-> 
+>
 > 你想了想之后，说：如果是这样的话，那就不是以上 **运行时** 的代码可以解决的了！
-> 
 
 如果只靠 **运行时**，那么是没有办法通过 **HTML 标签结构的方式**的方式来进行渲染解析的。这里需要用到编译时。
 
@@ -185,13 +181,12 @@ plum: true
 
 ---
 
-## ****10：运行时 + 编译时****
+## \***\*10：运行时 + 编译时\*\***
 
 **vue 是一个 运行时+编译时**的框架！
 
 > `vue`通过 `compiler`解析 `html`模板，生成 `render`函数，然后通过 `runtime`解析 `render`
-，从而挂载真实 `dom`。
-> 
+> ，从而挂载真实 `dom`。
 
 既然 **compiler 可以直接解析 html 模板**，那么为什么还要生成 `render`函数，然后再去进行渲染呢？为什么不直接利用 `compiler`进行渲染呢?
 
@@ -204,7 +199,7 @@ plum: true
 
 ---
 
-### ****初次渲染****
+### \***\*初次渲染\*\***
 
 那么什么是初次渲染呢？
 
@@ -218,9 +213,9 @@ plum: true
 
 ```jsx
 <ul>
-	<li>1</li>
-	<li>2</li>
-	<li>3</li>
+  <li>1</li>
+  <li>2</li>
+  <li>3</li>
 </ul>
 ```
 
@@ -228,15 +223,15 @@ plum: true
 
 ---
 
-### ****更新渲染****
+### \***\*更新渲染\*\***
 
 如果此时如果 `ul`标签的内容发生了变化：
 
 ```jsx
 <ul>
-	<li>3</li>
-	<li>1</li>
-	<li>2</li>
+  <li>3</li>
+  <li>1</li>
+  <li>2</li>
 </ul>
 ```
 
@@ -251,8 +246,8 @@ plum: true
 
 1. 首先对于第一种方式而言：它的好处在于不需要进行任何的比对，需要执行 6 次（删除 3 次，重新渲染 3 次）`dom` 处理即可。
 2. 对于第二种方式而言：在逻辑上相对比较复杂。他需要分成两步来做：
-    1. 对比 **旧节点** 和 **新节点** 之间的差异
-    2. 根据差异，删除一个 **旧节点**，增加一个 **新节点**
+   1. 对比 **旧节点** 和 **新节点** 之间的差异
+   2. 根据差异，删除一个 **旧节点**，增加一个 **新节点**
 
 那么根据以上分析，我们知道了：
 
@@ -264,34 +259,33 @@ plum: true
 那么这两种方式，哪一种更快呢？来实验一下：
 
 ```jsx
-const length = 10000
-  // 增加一万个dom节点，耗时 3.992919921875 ms
-  console.time('element')
-  for (let i = 0; i < length; i++) {
-    const newEle = document.createElement('div')
-    document.body.appendChild(newEle)
-  }
-  console.timeEnd('element')
+const length = 10000;
+// 增加一万个dom节点，耗时 3.992919921875 ms
+console.time("element");
+for (let i = 0; i < length; i++) {
+  const newEle = document.createElement("div");
+  document.body.appendChild(newEle);
+}
+console.timeEnd("element");
 
-  // 增加一万个 js 对象，耗时 0.402099609375 ms
-  console.time('js')
-  const divList = []
-  for (let i = 0; i < length; i++) {
-    const newEle = {
-      type: 'div'
-    }
-    divList.push(newEle)
-  }
-  console.timeEnd('js')
+// 增加一万个 js 对象，耗时 0.402099609375 ms
+console.time("js");
+const divList = [];
+for (let i = 0; i < length; i++) {
+  const newEle = {
+    type: "div",
+  };
+  divList.push(newEle);
+}
+console.timeEnd("js");
 ```
 
- 从测试情况来看`dom` 的操作要比 `js` 的操作耗时多得多，即：**`dom` 操作比 `js` 更加耗费性能**。
+从测试情况来看`dom` 的操作要比 `js` 的操作耗时多得多，即：**`dom` 操作比 `js` 更加耗费性能**。
 
 > 首先对于第一种方式而言：它的好处在于不需要进行任何的比对，仅需要执行 6 次（删除 3 次，重新渲染 3 次）`dom` 处理即可。
-> 
-> 
+>
 > 对于第二种方式而言：在逻辑上相对比较复杂。他需要分成两步来做：
-> 
+>
 > 1. 对比 **旧节点** 和 **新节点** 之间的差异
 > 2. 根据差异，删除一个 **旧节点**，增加一个 **新节点**
 

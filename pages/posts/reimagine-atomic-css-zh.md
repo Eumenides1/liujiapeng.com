@@ -73,10 +73,16 @@ John Polacek 在 [文章 Let’s Define Exactly What Atomic CSS is](https://css-
 编译结果为：
 
 ```css
-.m-1 { margin: 0.25 rem; }
-.m-2 { margin: 0.5 rem; }
+.m-1 {
+  margin: 0.25 rem;
+}
+.m-2 {
+  margin: 0.5 rem;
+}
 /* ... */
-.m-10 { margin: 2.5 rem; }
+.m-10 {
+  margin: 2.5 rem;
+}
 ```
 
 现在你可以直接使用 `class="m-1"` 来设置边距。但正如你所见，用这种方法的情况下，你不能使用除了 1 到 10 之外的边距，而且，即使你只使用了其中一条 CSS 规则，但还是要为其余几条规则的文件体积买单。如果之后你还想支持不同的 margin 方向，使用比如 `mt` 代表 `margin-top`，`mb` 代表 `margin-bottom` 等，加上这 4 个方向以后，你的 CSS 大小会变成原来的 5 倍。如果再有使用到像 `:hover` 和 `:focus` 这样的伪类时，体积还会得更变大。以此类推，每多加一个工具类，往往意味着你 CSS 文件的大小也会随之增加。这也就是为什么传统的 Tailwind 生成的 CSS 文件会有数 MB 的大小。
@@ -100,37 +106,37 @@ John Polacek 在 [文章 Let’s Define Exactly What Atomic CSS is](https://css-
 为了实现这一点，Windi CSS 和 Tailwind JIT 都采用了预先扫描源代码的方式。下面是一个简单示例：
 
 ```ts
-import { promises as fs } from 'fs'
-import glob from 'fast-glob'
+import { promises as fs } from "node:fs";
+import glob from "fast-glob";
 
 // 通常这个是可以配置的
-const include = ['src/**/*.{jsx,tsx,vue,html}']
+const include = ["src/**/*.{jsx,tsx,vue,html}"];
 
 async function scan() {
-  const files = await glob(include)
+  const files = await glob(include);
 
   for (const file of files) {
-    const content = await fs.readFile(file, 'utf8')
+    const content = await fs.readFile(file, "utf8");
     // 将文件内容传递给生成器并配对 class 的使用情况
   }
 }
 
-await scan()
+await scan();
 // 扫描会在构建/服务器启动前完成
-await buildOrStartDevServer()
+await buildOrStartDevServer();
 ```
 
 为了在开发期间提供 HMR，通常会启动一个 [文件系统监听器](https://github.com/paulmillr/chokidar)：
 
 ```ts
-import chokidar from 'chokidar'
+import chokidar from "chokidar";
 
-chokidar.watch(include).on('change', (event, path) => {
+chokidar.watch(include).on("change", (event, path) => {
   // 重新读取文件
-  const content = await fs.readFile(file, 'utf8')
+  const content = await fs.readFile(file, "utf8");
   // 将新的内容重新传递给生成器
   // 清除 CSS 模块的缓存并触发 HMR 事件
-})
+});
 ```
 
 因此，通过按需生成方式，Windi CSS 获得了比传统的 Tailwind CSS [快 100 倍左右](https://twitter.com/antfu7/status/1361398324587163648) 的性能。
@@ -160,17 +166,17 @@ chokidar.watch(include).on('change', (event, path) => {
 module.exports = {
   theme: {
     borderWidth: {
-      DEFAULT: '1px',
-      0: '0',
-      2: '2px',
-      3: '3px',
-      4: '4px',
-      6: '6px',
-      8: '8px',
-      10: '10px' // <-- here
-    }
-  }
-}
+      DEFAULT: "1px",
+      0: "0",
+      2: "2px",
+      3: "3px",
+      4: "4px",
+      6: "6px",
+      8: "8px",
+      10: "10px", // <-- here
+    },
+  },
+};
 ```
 
 这似乎很合理，我可以把我需要的情况都列出来，回去继续工作了...等一下，我刚刚进行到哪里了？因为这样一个工具的丢失而被打断，除了配置，我们还会需要时间重新找回原本正在进行的工作的上下文。接着，如果我想设置边框颜色，我还需要查询文档，然后如何进行配置。也许有人喜欢这样的工作流程，但这并不适合我，我并不享受被本该直觉性工作的工具打断的我的工作流程。
@@ -179,31 +185,31 @@ Windi CSS 对规则相对宽松一些，会尽可能地根据你使用的 class 
 
 ```ts
 // tailwind.config.js
-const _ = require('lodash')
-const plugin = require('tailwindcss/plugin')
+const _ = require("lodash");
+const plugin = require("tailwindcss/plugin");
 
 module.exports = {
   theme: {
     rotate: {
-      '1/4': '90deg',
-      '1/2': '180deg',
-      '3/4': '270deg',
-    }
+      "1/4": "90deg",
+      "1/2": "180deg",
+      "3/4": "270deg",
+    },
   },
   plugins: [
     plugin(({ addUtilities, theme, e }) => {
-      const rotateUtilities = _.map(theme('rotate'), (value, key) => {
+      const rotateUtilities = _.map(theme("rotate"), (value, key) => {
         return {
           [`.${e(`rotate-${key}`)}`]: {
-            transform: `rotate(${value})`
-          }
-        }
-      })
+            transform: `rotate(${value})`,
+          },
+        };
+      });
 
-      addUtilities(rotateUtilities)
-    })
-  ]
-}
+      addUtilities(rotateUtilities);
+    }),
+  ],
+};
 ```
 
 将生成如下代码：
@@ -237,15 +243,15 @@ UnoCSS 是一个**引擎**，而非一款**框架**，因为它**并未提供核
 我们设想 UnoCSS 能够通过预设模拟大多数已有原子化 CSS 框架的功能。也有可能会被用作创建一些新的原子化 CSS 框架的引擎。例如：
 
 ```ts
-import UnocssPlugin from '@unocss/vite'
+import PresetAntfu from "@antfu/oh-my-cool-unocss-preset";
 
+import PresetBootstrap from "@unocss/preset-bootstrap";
 // 以下预设目前还不存在，
 // 欢迎大家踊跃贡献！
-import PresetTachyons from '@unocss/preset-tachyons'
-import PresetBootstrap from '@unocss/preset-bootstrap'
-import PresetTailwind from '@unocss/preset-tailwind'
-import PresetWindi from '@unocss/preset-windi'
-import PresetAntfu from '@antfu/oh-my-cool-unocss-preset'
+import PresetTachyons from "@unocss/preset-tachyons";
+import PresetTailwind from "@unocss/preset-tailwind";
+import PresetWindi from "@unocss/preset-windi";
+import UnocssPlugin from "@unocss/vite";
 
 export default {
   plugins: [
@@ -258,10 +264,10 @@ export default {
         // PresetAntfu
 
         // 选择其中一个...或多个！
-      ]
-    })
-  ]
-}
+      ],
+    }),
+  ],
+};
 ```
 
 让我们来看看如何使它们成为可能：
@@ -275,15 +281,15 @@ UnoCSS 的主要目标是直观性和可定制性。它可以让你在数十秒�
 原子化 CSS 可能数量相当庞大。因此，规则定义直接了当对于阅读和维护非常重要。如需为 UnoCSS 创建一个自定义规则，你可以这样写：
 
 ```ts
-rules: [
-  ['m-1', { margin: '0.25rem' }]
-]
+rules: [["m-1", { margin: "0.25rem" }]];
 ```
 
 当在用户代码库中检测到 `m-1` 时，就会生成如下 CSS：
 
 ```css
-.m-1 { margin: 0.25rem; }
+.m-1 {
+  margin: 0.25rem;
+}
 ```
 
 ###### 动态规则
@@ -293,8 +299,8 @@ rules: [
 ```ts
 rules: [
   [/^m-(\d+)$/, ([, d]) => ({ margin: `${d / 4}rem` })],
-  [/^p-(\d+)$/, match => ({ padding: `${match[1] / 4}rem` })],
-]
+  [/^p-(\d+)$/, (match) => ({ padding: `${match[1] / 4}rem` })],
+];
 ```
 
 其中，回调函数的第一个参数为匹配结果，所以你可以对它进行解构以获得正则表达式的匹配组。
@@ -313,9 +319,15 @@ rules: [
 就会生成相应的 CSS：
 
 ```css
-.m-100 { margin: 25rem; }
-.m-3 { margin: 0.75rem; }
-.p-5 { padding: 1.25rem; }
+.m-100 {
+  margin: 25rem;
+}
+.m-3 {
+  margin: 0.75rem;
+}
+.p-5 {
+  padding: 1.25rem;
+}
 ```
 
 这样就行了。而现在，你只需要使用相同的模式添加更多的实用工具类，你就拥有了属于自己的原子化 CSS！
@@ -356,10 +368,18 @@ variants: [
 例如，`ml-3`（Tailwind），`ms-2`（Bootstrap），`ma4`（Tachyons），`mt-10px`（Windi CSS）均会生效。
 
 ```css
-.ma4 { margin: 1rem; }
-.ml-3 { margin-left: 0.75rem; }
-.ms-2 { margin-inline-start: 0.5rem; }
-.mt-10px { margin-top: 10px; }
+.ma4 {
+  margin: 1rem;
+}
+.ml-3 {
+  margin-left: 0.75rem;
+}
+.ms-2 {
+  margin-inline-start: 0.5rem;
+}
+.mt-10px {
+  margin-top: 10px;
+}
 ```
 
 [了解更多关于默认预设的信息](https://github.com/antfu/unocss/tree/main/packages/preset-uno)。
@@ -377,7 +397,9 @@ variants: [
 它会把你的冗长的 Tailwind 代码（难以阅读与编辑）：
 
 ```html
-<button class="bg-blue-400 hover:bg-blue-500 text-sm text-white font-mono font-light py-2 px-4 rounded border-2 border-blue-200 dark:bg-blue-500 dark:hover:bg-blue-600">
+<button
+  class="bg-blue-400 hover:bg-blue-500 text-sm text-white font-mono font-light py-2 px-4 rounded border-2 border-blue-200 dark:bg-blue-500 dark:hover:bg-blue-600"
+>
   Button
 </button>
 ```
@@ -385,7 +407,7 @@ variants: [
 变成：
 
 ```html
-<button 
+<button
   bg="blue-400 hover:blue-500 dark:blue-500 dark:hover:blue-600"
   text="sm white"
   font="mono light"
@@ -428,7 +450,9 @@ variants: [
 <!-- Sun in light mode, Moon in dark mode, from Carbon -->
 <button class="i-carbon-sun dark:i-carbon-moon" />
 <!-- Twemoji of laugh, turns to tear on hovering -->
-<div class="i-twemoji-grinning-face-with-smiling-eyes hover:i-twemoji-face-with-tears-of-joy" />
+<div
+  class="i-twemoji-grinning-face-with-smiling-eyes hover:i-twemoji-face-with-tears-of-joy"
+/>
 ```
 
 <div flex gap-2 text-4xl p-2 mt4>
@@ -441,7 +465,7 @@ variants: [
   <!-- Sun in light mode, Moon in dark mode, from Carbon -->
   <button class="i-carbon-sun dark:i-carbon-moon" @click="toggleDark()"/>
   <!-- Twemoji of laugh, turns to tear on hovering -->
-  <div class="i-twemoji-grinning-face-with-smiling-eyes hover:i-twemoji-face-with-tears-of-joy" /> 
+  <div class="i-twemoji-grinning-face-with-smiling-eyes hover:i-twemoji-face-with-tears-of-joy" />
   <div text-base my-auto flex><div i-carbon-arrow-left my-auto mr-1 /> 悬停在它上面</div>
 </div>
 
@@ -515,30 +539,27 @@ tailwindcss  v3.0.0-alpha.1  1258.54 ms / 1249.79 ms (x251.28)
 export default {
   plugins: [
     {
-      name: 'unocss',
+      name: "unocss",
       transform(code, id) {
         // 过滤掉无需扫描的文件
-        if (!filter(id))
-          return
+        if (!filter(id)) return;
 
         // 扫描代码（同时也可以处理开发中的无效内容）
-        scan(code, id)
+        scan(code, id);
 
         // 我们只需要内容，所以不需要对代码进行转换
-        return null
+        return null;
       },
       resolveId(id) {
-        return id === VIRTUAL_CSS_ID ? id : null
+        return id === VIRTUAL_CSS_ID ? id : null;
       },
       async load(id) {
         // 生成的 css 会作为一个虚拟模块供后续使用
-        if (id === VIRTUAL_CSS_ID)
-          return { code: await generate() }
-
-      }
-    }
-  ]
-}
+        if (id === VIRTUAL_CSS_ID) return { code: await generate() };
+      },
+    },
+  ],
+};
 ```
 
 由于 Vite 也会处理 HMR，并在文件变化时再次执行 `transform` 钩子，这使得 UnoCSS 可以在一次加载中就完成所有的工作，没有重复的文件 I/O 和文件系统监听器。此外，通过这种方式，扫描会依赖于模块图而非文件 glob。这意味着只有构建在你应用程序中的模块才会影响生成的 CSS，而并非你文件夹下的任何文件。

@@ -1,7 +1,7 @@
 ---
 title: Blog - Jaguar Liu
 display: ''
-plum: true
+art: plum
 ---
 
 <SubNav />

@@ -2,7 +2,7 @@
 title: Jaguar Liu
 description: Jaguar Liu's Portfolio
 image: https://antfu.me/og.png
-art: dots
+art: plum
 ---
 
 Hey, I am Jaguar Liu, A full-stack developer who is passionate about programming and developing some small gadgets. Working at [<span i-fxemoji:penguin /> 腾讯云](https://cloud.tencent.com/).

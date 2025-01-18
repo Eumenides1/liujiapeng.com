@@ -23,7 +23,6 @@ declare module 'vue-router/auto-routes' {
     '/ai-projects': RouteRecordInfo<'/ai-projects', '/ai-projects', Record<never, never>, Record<never, never>>,
     '/algorithm/': RouteRecordInfo<'/algorithm/', '/algorithm', Record<never, never>, Record<never, never>>,
     '/algorithm/01-two-sum': RouteRecordInfo<'/algorithm/01-two-sum', '/algorithm/01-two-sum', Record<never, never>, Record<never, never>>,
-    '/algorithm/02-add-two-numbers': RouteRecordInfo<'/algorithm/02-add-two-numbers', '/algorithm/02-add-two-numbers', Record<never, never>, Record<never, never>>,
     '/giving-talks': RouteRecordInfo<'/giving-talks', '/giving-talks', Record<never, never>, Record<never, never>>,
     '/link/': RouteRecordInfo<'/link/', '/link', Record<never, never>, Record<never, never>>,
     '/posts/': RouteRecordInfo<'/posts/', '/posts', Record<never, never>, Record<never, never>>,

@@ -22,6 +22,7 @@
     "prettier": "^3.4.2",
     "shiki-magic-move": "^0.5.2",
     "shikiji-twoslash": "^0.10.2",
+    "vitepress-plugin-tabs": "^0.5.0",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",
     "vue-router-better-scroller": "^0.0.0"

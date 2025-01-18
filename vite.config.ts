@@ -22,7 +22,6 @@ import { VueRouterAutoImports } from 'unplugin-vue-router'
 import VueRouter from 'unplugin-vue-router/vite'
 import { defineConfig } from 'vite'
 import Inspect from 'vite-plugin-inspect'
-
 import Exclude from 'vite-plugin-optimize-exclude'
 import SVG from 'vite-svg-loader'
 import { slugify } from './scripts/slugify'
@@ -100,7 +99,6 @@ export default defineConfig({
             ],
           }),
         )
-
         md.use(anchor, {
           slugify,
           permalink: anchor.permalink.linkInsideHeader({
